@@ -1,0 +1,6 @@
+D:\CA_VISTA\CAUI\BusinessLayer\bin\Debug\BusinessLayer.dll
+D:\CA_VISTA\CAUI\BusinessLayer\bin\Debug\BusinessLayer.pdb
+D:\CA_VISTA\CAUI\BusinessLayer\obj\Debug\BusinessLayer.csproj.AssemblyReference.cache
+D:\CA_VISTA\CAUI\BusinessLayer\obj\Debug\BusinessLayer.csproj.CoreCompileInputs.cache
+D:\CA_VISTA\CAUI\BusinessLayer\obj\Debug\BusinessLayer.dll
+D:\CA_VISTA\CAUI\BusinessLayer\obj\Debug\BusinessLayer.pdb

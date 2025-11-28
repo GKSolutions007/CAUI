@@ -1,0 +1,583 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login and Registration</title>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/jquery-ui.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="~/Content/Snackbar.css" rel="stylesheet" />
+    @*<link rel="SHORTCUT ICON" href="~/images/pvedownload_transp.png" />*@
+    <script src="~/Scripts/jquery-1.12.4.js"></script>
+    <script src="~/Scripts/jquery-3.7.1.js"></script>
+    <script src="~/Scripts/jquery-ui.js"></script>
+    <script src="~/Scripts/Validation.js"></script>
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f6f5f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-family: 'Montserrat', sans-serif;
+            height: 100vh;
+            margin: -20px 0 50px;
+        }
+
+        h1 {
+            font-weight: bold;
+            margin: 0;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        p {
+            font-size: 14px;
+            font-weight: 100;
+            line-height: 20px;
+            letter-spacing: 0.5px;
+            margin: 20px 0 30px;
+        }
+
+        span {
+            font-size: 12px;
+        }
+
+        a {
+            color: #333;
+            font-size: 14px;
+            text-decoration: none;
+            margin: 15px 0;
+        }
+
+        button {
+            border-radius: 20px;
+            border: 1px solid #FF4B2B;
+            background-color: #FF4B2B;
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 12px 45px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: transform 80ms ease-in;
+        }
+
+            button:active {
+                transform: scale(0.95);
+            }
+
+            button:focus {
+                outline: none;
+            }
+
+            button.ghost {
+                background-color: transparent;
+                border-color: #FFFFFF;
+            }
+
+        form {
+            background-color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 50px;
+            height: 100%;
+            text-align: center;
+        }
+
+        input {
+            background-color: #eee;
+            border: none;
+            padding: 12px 15px;
+            margin: 8px 0;
+            width: 100%;
+            border-radius: 10px;        
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+            position: relative;
+            overflow: hidden;
+            width: 768px;
+            max-width: 100%;
+            min-height: 480px;
+        }
+
+        .form-container {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            transition: all 0.6s ease-in-out;
+        }
+
+        .sign-in-container {
+            left: 0;
+            width: 50%;
+            z-index: 2;
+        }
+
+        .container.right-panel-active .sign-in-container {
+            transform: translateX(100%);
+        }
+
+        .sign-up-container {
+            left: 0;
+            width: 50%;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .container.right-panel-active .sign-up-container {
+            transform: translateX(100%);
+            opacity: 1;
+            z-index: 5;
+            animation: show 0.6s;
+        }
+
+        @@keyframes show {
+            0%, 49.99% {
+                opacity: 0;
+                z-index: 1;
+            }
+
+            50%, 100% {
+                opacity: 1;
+                z-index: 5;
+            }
+        }
+
+        .overlay-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            transition: transform 0.6s ease-in-out;
+            z-index: 100;
+        }
+
+        .container.right-panel-active .overlay-container {
+            transform: translateX(-100%);
+        }
+
+        .overlay {
+            background: #FF416C;
+            background: -webkit-linear-gradient(to right, #FF4B2B, #FF416C);
+            background: linear-gradient(to right, #FF4B2B, #FF416C);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: 0 0;
+            color: #FFFFFF;
+            position: relative;
+            left: -100%;
+            height: 100%;
+            width: 200%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .container.right-panel-active .overlay {
+            transform: translateX(50%);
+        }
+
+        .overlay-panel {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 40px;
+            text-align: center;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .overlay-left {
+            transform: translateX(-20%);
+        }
+
+        .container.right-panel-active .overlay-left {
+            transform: translateX(0);
+        }
+
+        .overlay-right {
+            right: 0;
+            transform: translateX(0);
+        }
+
+        .container.right-panel-active .overlay-right {
+            transform: translateX(20%);
+        }
+
+        .social-container {
+            margin: 20px 0;
+        }
+
+            .social-container a {
+                border: 1px solid #DDDDDD;
+                border-radius: 50%;
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0 5px;
+                height: 40px;
+                width: 40px;
+            }
+
+        footer {
+            background-color: #222;
+            color: #fff;
+            font-size: 14px;
+            bottom: 0;
+            position: fixed;
+            left: 0;
+            right: 0;
+            text-align: center;
+            z-index: 999;
+        }
+
+            footer p {
+                margin: 10px 0;
+            }
+
+            footer i {
+                color: red;
+            }
+
+            footer a {
+                color: #3c97bf;
+                text-decoration: none;
+            }
+             /* The Modal (background) */
+     .modalBatch {
+         display: none; /* Hidden by default */
+         position: fixed; /* Stay in place */
+         z-index: 10000; /* Sit on top */
+         left: 0;
+         top: 0;
+         width: 100%; /* Full width */
+         height: 100%; /* Full height */
+         overflow: auto; /* Enable scroll if needed */
+         background-color: rgb(0,0,0); /* Fallback color */
+         background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+     }
+
+     /* Modal Content/Box */
+     @@media only screen and (min-width: 600px) {
+         .modalBatch-content {
+             background-color: #ffffff;
+             margin: 3% auto; /* 15% from the top and centered */
+             padding: 2px;
+             border: 1px solid #888;
+             width: 35%; /* Could be more or less, depending on screen size */
+             height: 80%;
+             top: 5%;
+             overflow: auto;
+         }
+     }
+
+     @@media only screen and (max-width: 600px) {
+         .modalBatch-content {
+             background-color: #ffffff;
+             margin: 3% auto; /* 15% from the top and centered */
+             padding: 5px;
+             border: 1px solid #888;
+             width: 95%; /* Could be more or less, depending on screen size */
+             height: 80%;
+             top: 20%;
+             overflow: auto;
+         }
+     }
+
+        .form-label {
+            position: relative;
+            display: block;
+            clear: both;
+            max-width: 500px;
+            margin: 0 auto;
+            width:100%
+        }
+
+        .labelup {
+            -webkit-transform: translateY(50%);
+            -moz-transform: translateY(-50%);
+            -ms-transform: translateY(-50%);
+            -o-transform: translateY(-50%);
+            transform: translateY(50%);
+            -webkit-transition: all 0.2s ease-in-out;
+            -moz-transition: all 0.2s ease-in-out;
+            transition: all 0.2s ease-in-out;
+            position: absolute;
+            top: -25%;
+            left: 1em;
+            background: #f5f5f5;
+            color: #2b2828;
+            font-size: 0.9em;
+            cursor: text;
+            pointer-events: none;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="toastBox"></div>
+    <div class="container" id="container">
+        <div class="form-container sign-up-container">
+            <form>
+                <span class="form-label">
+                    <input type="text" id="txtUserName" placeholder="* Name" required>
+                    <label class="labelup"> User Name <label style="color:red">*</label></label>
+                </span>
+                <span class="form-label">
+                    <input type="text" id="txtMobNo" placeholder="* Mobile Number" pattern="[6789][0-9]{9,12}" title="Phone number start with 6-9 and remaing 9 digit with 0-9" maxlength="10"
+                           oninput="javascript: if (this.value.length > this.maxLength) { this.value = this.value.slice(0, this.maxLength); }" required>
+                    <label class="labelup"> Mobile No <label style="color:red">*</label></label>
+                </span>
+                <span class="form-label">
+                    <input type="email" id="txtEmail" placeholder="* Email Address" required>
+                    <label class="labelup"> Email ID <label style="color:red">*</label></label>
+                </span>
+                <span class="form-label">
+                    <input type="text" id="txtUserID" placeholder="* User ID" required>
+                    <label class="labelup"> User ID <label style="color:red">*</label></label>
+                </span>
+                <span class="form-label">
+                    <input type="password" id="txtPassword" placeholder="* Password" onkeyup="checkPasswordMatch();" required>
+                    <label class="labelup"> Password <label style="color:red">*</label></label>
+                </span>
+                <span class="form-label">
+                    <input type="password" id="txtCnfPassword" placeholder="* Confirm password" onkeyup="checkPasswordMatch();" required>
+                    <label class="labelup"> Confirm password <label style="color:red">*</label></label>
+                </span>                                
+                <div class="registrationFormAlert" id="divCheckPasswordMatch"></div>
+                <button id="btnSignup">Sign Up</button>
+            </form>
+        </div>
+        <div class="form-container sign-in-container">
+            <form action="#">
+                <p style="color:green">@ViewData["AlertMessage"]</p>
+                <span class="form-label">
+                    <input type="text" placeholder="Email or User ID" />
+                    <label class="labelup"> Email or User ID <label style="color:red">*</label></label>
+                </span>
+                <span class="form-label">
+                    <input type="password" placeholder="Password" />
+                    <label class="labelup"> Password <label style="color:red">*</label></label>
+                </span>
+                <button>Sign In</button>
+                <a href="#" id="lnkfp">Forgot your password?</a>
+            </form>
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Welcome Back!</h1>
+                    <p>To keep connected with us please login with your personal info</p>
+                    <button class="ghost" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Hello, Friend!</h1>
+                    <p>Enter your personal details and start journey with us</p>
+                    <button class="ghost" id="signUp">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="modalBatch" id="myModalfg">
+            <div class="modal-dialog" style="width:auto;">
+                <div class="modalBatch-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header" style="background-color:lightgoldenrodyellow;">
+                        <button type="button" class="close">&times;</button>
+                        <h4 class="modal-title"> <b><u>Forgot Password?</u></b></h4>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        Recovery Email :<b> <label id="lblresetemail" style="color:brown;"></label></b>
+                        <div class="input-group" style="padding-top:15px;">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                            <input type="email" placeholder="Enter E-mail ID..." class="form-control" id="txtEmailID" />
+                            <div id="divMessageemail" style="color:red" class="clrdivs"></div>
+                        </div>
+                        <div class="input-group-btn" style="padding-top:5px;">
+                            <button class="btn-warning" id="btnfgGetCode" style="color:white;width:100%">Get Code</button>
+                            <div id="divMessagevercode" class="clrdivs"></div>
+                        </div>
+                        <div id="dvverotp">
+                            <table class="table">
+                                <tr>
+                                    <td>
+                                        <input type="number" placeholder="Enter OTP..." id="txtVerifyOTP" hidden />
+                                        <input type="number" placeholder="Enter OTP..." class="form-control" id="txtOTP" maxlength="6" />
+                                    </td>
+                                    <td>
+                                        <button class="btn-info" id="btnfgVerifyOTP" style="color:white;width:100%">Verify OTP</button>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div id="divMessageverotp" style="color:red" class="clrdivs"></div>
+                        </div>
+                        <div id="dvverpwd">
+                            <input type="password" placeholder="Enter Password..." class="form-control" id="txtpwd" />
+                            <div id="divMessagepwd" style="color:red" class="clrdivs"></div>
+                            <input type="password" placeholder="Enter Confirm Password..." class="form-control" id="txtCnfpwd" />
+                            <div id="divMessagecnfpwd" style="color:red" class="clrdivs"></div>
+                            <div style="padding-top:7px">
+                                <button type="button" class="btn-success" id="btnFGAccept" style="width:100%"><span class="glyphicon glyphicon-saved"> Reset</span></button>
+                            </div>
+
+                        </div>
+                        @*</div>*@
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="modal-footer" style="background-color:skyblue">
+                        <div style="padding-top:10px" align="right">
+                            <button type="button" class="btn-danger" id="btnBatchClose"><span class="glyphicon glyphicon-folder-close"> Close</span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    var Aurl = '@Session["APIurl"]';
+    var url = '@Session["url"]';
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.getElementById('container');
+
+        signUpButton.addEventListener('click', () => {
+            container.classList.add("right-panel-active");
+        });
+
+        signInButton.addEventListener('click', () => {
+            container.classList.remove("right-panel-active");
+        });
+        var modal = document.getElementById("myModalfg");
+        var span = document.getElementsByClassName("close")[0];
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+        $('#btnBatchClose').click(function (e) {
+            modal.style.display = "none";
+        });
+        $('#lnkfp').click(function (e) {
+            modal.style.display = "block";
+        });
+        function checkPasswordMatch() {
+            var password = $("#txtPassword").val();
+            var confirmPassword = $("#txtCnfPassword").val();
+            if (password.length > 0 && confirmPassword.length > 0) {
+                if (password != confirmPassword) {
+                    $("#divCheckPasswordMatch").html("Passwords do not match!");
+                    $("#divCheckPasswordMatch").css({ "color": "red" });
+                }
+                else {
+                    $("#divCheckPasswordMatch").html("Passwords match.");
+                    $("#divCheckPasswordMatch").css({ "color": "green" });
+                }
+            } else {
+                $("#divCheckPasswordMatch").html("");
+            }
+        }
+        function SUpValidation() {
+            var IsValid = true;
+            var regex_MobNo = /^[0-9]{10,12}$/;
+            $("#dvErrpwdMsg").html("");
+            if ($("#txtUserID").val() == "") {
+                IsValid = false;
+            }
+            else if ($("#txtEmail").val() == "") {
+                IsValid = false;
+            } else if ($("#txtPassword").val() == "") {
+                IsValid = false;
+            } else if ($("#txtUserName").val() == "") {
+                IsValid = false;
+            } else if ($("#txtMobNo").val() == "") {
+                IsValid = false;
+            } else if ($("#txtCnfPassword").val() == "") {
+                IsValid = false;
+            }
+            if ($("#txtCnfPassword").val() != $("#txtPassword").val()) {
+                IsValid = false;
+                $("#dvErrpwdMsg").html("Passwords Mismatched");
+                showErrorSnackbar('Passwords Mismatched');
+            }
+            if ($('#txtMobNo').val().trim() != '') {
+                if (!regex_MobNo.test($('#txtMobNo').val())) {
+                    if (IsValid) {
+                        isValid = false;
+                        $('#txtMobNo').select();
+                    }
+                    showErrorSnackbar('* Invalid Mob No format');
+                }
+            }
+            return IsValid;
+        }
+        $("#btnSignup").click(function () {
+            if (SUpValidation()) {
+                //showSuccessSnackbar("validate success");
+                var lstMaster = {
+                    "Mode": 1,
+                    "ID": 0,
+                    "UserID": $("#txtUserID").val(),
+                    "UserName": $("#txtUserName").val(),
+                    "Password": $("#txtPassword").val(),
+                    "Mobilenumber": $("#txtMobNo").val(),
+                    "EMailID": $("#txtEmail").val(),
+                    "RoleID": 0,
+                    "PwdResetCount": 0,
+                    "Active": 0,
+                    "LoginUserID": 0,
+                    "UIURL" : '@Session["AbsURL"]'
+                };
+                $.ajax({
+                    url: Aurl + "signup/save",
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(lstMaster),
+                    success: function (data) {
+                        console.log("Response data " + eval(data));
+                        $.each(data, function (i, item) {
+                            if (item.MsgID == "0") {
+                                $("#txtUserID,#txtUserName,#txtPassword,#txtMobNo,#txtEmail,#txtCnfPassword").val("");
+                                $("#divCheckPasswordMatch").html("");
+                                container.classList.remove("right-panel-active");
+                                showSuccessSnackbar("User created successfully. Activation mail send to your mail. Check and Activate your Account");
+                            }
+                            else if (item.MsgID == "1") {
+                                showErrorSnackbar(item.Message);
+                            }
+                        });
+                    },
+                    error: function (data) {
+                        //called when there is an error
+                        showErrorSnackbar(data);
+                    },
+                });
+            }
+        });        
+    </script>
+</body>
+</html>

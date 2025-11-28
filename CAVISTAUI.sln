@@ -5,6 +5,8 @@ VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CAVISTAUI", "CAVISTAUI\CAVISTAUI.csproj", "{C744CFF1-6684-4F91-A696-A154A6250A76}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLayer", "BusinessLayer\BusinessLayer.csproj", "{6E0E7EE5-43D4-4DDA-9373-52C359A4FFA0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{C744CFF1-6684-4F91-A696-A154A6250A76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C744CFF1-6684-4F91-A696-A154A6250A76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C744CFF1-6684-4F91-A696-A154A6250A76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E0E7EE5-43D4-4DDA-9373-52C359A4FFA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E0E7EE5-43D4-4DDA-9373-52C359A4FFA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E0E7EE5-43D4-4DDA-9373-52C359A4FFA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E0E7EE5-43D4-4DDA-9373-52C359A4FFA0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
