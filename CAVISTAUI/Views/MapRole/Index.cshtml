@@ -1,0 +1,370 @@
+﻿@{
+    ViewBag.Title = "Map Role";
+}
+<style type="text/css">
+    .demo {
+        overflow: auto;
+        margin-top: 10px;
+        margin-bottom: 50px;
+    }
+</style>
+
+<link href="~/dist/themes/default/style.min.css" rel="stylesheet" />
+
+<script src="~/dist/jquery.min.js"></script>
+<script src="~/dist/jstree.min.js"></script>
+
+<script type="text/javascript">
+    window.history.forward();
+    function noBack() { window.history.forward(); }
+</script>
+
+<body onload="noBack();" onpageshow="if (event.persisted) noBack()">
+    <div class="row" style="margin-bottom:50px;">
+        <h3 style="text-align:center;font-weight:bold;color:#0067c6;">Map Role</h3>
+        <hr class="style14" />
+        <div class="toastBox"></div>
+        <div class="col-md-12" align="center">
+            <div class="col-sm-12" align="center">
+                <div style="color:green;font-weight:bold;" id="divSaveMsg"></div>
+                <br />
+                <table cellpadding="0" id="tblParam1">
+
+                    <tbody>
+                        <tr>
+                            <td class="paddingtd" align="right" style="color:black;font-size:11px;">@Html.Label("* Role Name :", new { @class = "clrWhite" })&#x2003;</td>
+                            <td colspan="2">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                                    <select data-placeholder="Select User..." class="form-control" id="txtUserName" style="width:200px">
+                                        @*@{
+                                                foreach (var item in Model.UserName)
+                                                {
+                                                    <option value="@item.Value">@item.Text</option>
+                                                }
+                                            }*@
+                                    </select>
+                                </div>
+                                <div style="color:red;padding-top:5px;padding-left:5px;" id="divErrorOnRoleName" align="center">
+                                    @*@Html.ValidationMessageFor(model => model.UserName)*@
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-12" align="center">
+                <table align="center">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <button id="btnClear" type="button" class="btn btn-danger" onclick="@("window.location.href='" + @Url.Action("Index", "MapRole") + "'");"><span class="icon-refresh" style="color:white"></span>&#x2009;Clear</button>
+                            </td>
+
+                            <td>
+                                <button id="btnGet" type="button" class="btn btn-info"><span class="glyphicon glyphicon-import" style="color:white"></span>&#x2009;Get Details</button>
+                            </td>
+                            <td>
+                                <button id="btnSubmit" type="button" class="btn btn-success"><span class="icon-save" style="color:white"></span>&#x2009;Save Details</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                @*<button id="btnchk">checked items</button>*@
+            </div>
+            @*<div class="col-sm-3">
+                    <button id="btnClear" type="button" class="btn btn-danger">Clear</button>
+                    <button id="btnGet" type="button" class="btn btn-default">Get Details</button>&nbsp;
+                    <button id="btnSubmit" type="button" class="btn btn-success">Save Details</button>
+                </div>*@
+        </div>
+        <div style="padding:10px" hidden>
+            <input id="chkExpandAll" type="checkbox" />&ensp;<label for="chkExpandAll">Expand All</label>
+        </div>
+        <div style="padding-left:25px;" id="treeView" class="demo"></div>
+        <a href="javascript:" id="return-to-top"><i class="icon-chevron-up"></i></a>
+    </div>
+
+</body>
+
+@*<script src="~/Scripts/jquery.mockjax.js"></script>*@
+
+<script type="text/javascript">
+    var LogID = '@Session["LoginUserID"]';
+    var RID = '@Session["RoleID"]';
+    var Aurl = '@Session["APIurl"]';
+    $(document).ready(function () {
+        $("#txtUserName").prop('disabled', false);
+        $('#txtUserName').focus();
+        $('#btnSubmit').toggle(false);
+        $('#divSaveMsg').html('');
+
+        $(window).scroll(function () {
+            if ($(this).scrollTop() >= 200) {
+                $('#return-to-top').fadeIn(200);
+            } else {
+                $('#return-to-top').fadeOut(200);
+            }
+        });
+
+        $('#return-to-top').click(function () {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 500);
+        });
+        $("#btnchk").click(function () {
+            var checked_ids = [];
+            var uniqueIds = new Set();
+            // Get jsTree instance
+            var tree = $('#treeView').jstree(true);
+            // Get all fully selected nodes (with full data)
+            var selectedNodes = tree.get_selected(true);
+            // Traverse each selected node
+            $.each(selectedNodes, function () {
+                // Add selected node
+                if (!uniqueIds.has(this.id)) {
+                    uniqueIds.add(this.id);
+                    checked_ids.push({ IDs: this.id });
+                }
+                // Traverse up to root and add all parent nodes
+                var parentId = this.parent;
+                while (parentId && parentId !== '#') {
+                    if (!uniqueIds.has(parentId)) {
+                        uniqueIds.add(parentId);
+                        checked_ids.push({ IDs: parentId });
+                    }
+                    parentId = tree.get_node(parentId).parent;
+                }
+            });
+            console.log("Checked IDs including parent groups:", checked_ids);
+
+        });
+        GetRoles();
+        function GetRoles() {
+            $.ajax({
+                url: Aurl + "maprole/getroles",
+                type: 'get',
+                contentType: 'json',
+                data: { RoleID: RID },
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: function (data) {
+                    $('#txtUserName').find("option").remove();
+                    $('#txtUserName').append($('<option/>', {
+                        value: 0,
+                        text: "-- Select Role --",
+                        class: ""
+                    }));
+                    $.each(data, function (i, items) {
+                        $('#txtUserName').append($('<option/>', {
+                            value: items.RoleID,
+                            text: items.RoleName,
+                        }));
+                    });
+                }
+            });
+        }
+        $('#btnGet').click(function () {
+            $('#btnSubmit').toggle(false);
+            //jsTreeLoad($('#txtRoleName').val())
+
+            var IsTrue = true;
+            $('#divErrorOnRoleName').html('');
+            if ($('#txtUserName').val() == 0) {
+                $('#divErrorOnRoleName').html('* Role Name is required');
+                showErrorSnackbar('Role Name is required');
+                $('#txtUserName').focus();
+                IsTrue = false;
+            }
+            if (IsTrue == true) {
+                var var_RoleName = $('#txtUserName').val();
+                var blTrue = true;
+                if (blTrue) {
+                    $("#txtUserName").prop('disabled', true);
+                    $('#btnSubmit').toggle(true);
+                    $('#divSaveMsg').html('');
+                    $('#treeView').hide();
+                    jsTreeLoad(var_RoleName);
+                }
+                else {
+                    $('#divErrorOnRoleName').html('* Role Name is not exists');
+                    showErrorSnackbar('Role Name is not exists');
+                }
+            }
+        });        
+        function jsTreeLoad(var_RoleName)
+        {
+            var exporcoll = $("#chkExpandAll").is(":checked") ? 1 : 2;
+            $('#treeView').show();
+            $('#treeView').jstree("refresh");
+            var treeData;
+            $.ajax({
+                url: Aurl + "maprole/gettreedata",
+                type: 'get',
+                contentType: 'json',
+                data: { RoleID: var_RoleName, UID: LogID },
+                async : false,                
+                success: function (data) {
+                    console.log("RAW treeData : ", data);
+                    treeData = JSON.parse(data); // if finalmenus is a JSON string
+                    console.log("treeData : ", treeData);
+                    if (treeData) {
+                        $('#treeView').jstree({
+                            'core': {
+                                "themes": {
+                                    "responsive": true
+                                },
+                                'data': treeData
+                            },
+                            collapsed: true,
+                            "checkbox": {
+                                real_checkboxes: true,
+                            },
+                            "plugins": ["themes", "html_data", "checkbox", "ui", "collapse"],
+                        }).on('ready.jstree', function () {
+                            if (exporcoll == 2) {
+                                $(this).jstree("close_all");
+                            } else {
+                                $(this).jstree("open_all");
+                            }
+                        });
+                    } else {
+                        showErrorSnackbar("No records found");
+                    }
+                },
+                error: function (data) {
+                    console.log("error : ", data);
+                }
+            });
+
+        }
+        //$('#treeView').jstree({
+        //    'core': {
+        //        "themes": {
+        //            "responsive": true
+        //        },
+        //        'data': {
+        //            //"url": "MapRole/GetTreeData",
+        //            "url": Aurl + "maprole/gettreedata",
+        //            "dataType": "json",
+        //            "Type": 'POST',
+        //            "data": { RoleID: var_RoleName, UID: LogID },
+        //            xhrFields: {
+        //                withCredentials: true
+        //            },
+        //        }
+        //    },
+        //    collapsed: true,
+        //    "checkbox": {
+        //        real_checkboxes: true,
+        //    },
+        //    "plugins": ["themes", "html_data", "checkbox", "ui", "collapse"],
+        //}).on('ready.jstree', function () {
+        //    if (exporcoll == 2) {
+        //        $(this).jstree("close_all");
+        //    } else {
+        //        $(this).jstree("open_all");
+        //    }
+        //});
+
+        //$("#chkExpandAll").click(function () {
+        //    var chkexpcoll = $("#chkExpandAll").is(":checked") ? 1 : 2;
+        //    $('#treeView').jstree().on('ready.jstree', function () {
+        //        if (chkexpcoll == 2) {
+        //            $(this).jstree("close_all");
+        //        } else {
+        //            $(this).jstree("open_all");
+        //        }
+        //    });
+        //})
+
+        var checked_ids = [];
+        function getCheckedIDs() {
+            //checked_ids = new Array();
+            //var selectedElms = $('#treeView').jstree("get_selected", true);
+            //var parentNodeIDs = $("#treeView").find(".jstree-undetermined");
+            //if (selectedElms.length > 0) {
+            //    console.log("Child :", selectedElms)
+            //    $.each(selectedElms, function () {
+            //        var getChecked = {
+            //            IDs: this.id
+            //        };
+            //        checked_ids.push(getChecked);
+            //    });
+            //}
+            //else {
+            //    console.log("No Child :", selectedElms)
+            //}
+            //if (parentNodeIDs.length > 0) {
+            //    $.each(parentNodeIDs, function (i, element) {
+            //        var nodeId = $(element).closest('.jstree-node').attr("id");
+            //        var getChecked = {
+            //            IDs: nodeId
+            //        };
+            //        checked_ids.push(getChecked);
+            //    });
+            //}
+            checked_ids = [];
+            var uniqueIds = new Set();
+            // Get jsTree instance
+            var tree = $('#treeView').jstree(true);
+            // Get all fully selected nodes (with full data)
+            var selectedNodes = tree.get_selected(true);
+            // Traverse each selected node
+            $.each(selectedNodes, function () {
+                // Add selected node
+                if (!uniqueIds.has(this.id)) {
+                    uniqueIds.add(this.id);
+                    checked_ids.push({ IDs: this.id });
+                }
+                // Traverse up to root and add all parent nodes
+                var parentId = this.parent;
+                while (parentId && parentId !== '#') {
+                    if (!uniqueIds.has(parentId)) {
+                        uniqueIds.add(parentId);
+                        checked_ids.push({ IDs: parentId });
+                    }
+                    parentId = tree.get_node(parentId).parent;
+                }
+            });
+        }
+        $('#btnSubmit').click(function () {
+            $("#btnSubmit").prop("disabled", true);
+            getCheckedIDs();
+            $('#divSaveMsg').html('');
+            $.ajax({
+                //url: "@Url.Action("SaveMapUserDetails", "MapRole")",
+                url: Aurl + "maprole/savemaprole",
+                type: "POST",
+                //dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({ checked_ids: checked_ids, RoleName: $('#txtUserName').val(), UID: LogID }),
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: function (data) {
+                    $("#btnSubmit").prop("disabled", false);
+                    $('#divSaveMsg').html('Saved Successfully');
+                    showSuccessSnackbar("Saved Successfully");
+                    $('#txtUserName').prop("disabled", false);
+                    $('#txtUserName').val(0);
+                    $('#txtUserName').focus();
+                    $('#btnSubmit').toggle(false);
+                    $('#treeView').hide();
+                    setTimeout(() => {
+                        $('#btnClear').click();
+                    }, 2000);
+
+                }, error: function (data) {
+                    $("#btnSubmit").prop("disabled", false);
+                    if (data.status == "401") {
+                        var msg = data.responseJSON.Message;
+                        //showErrorSnackbar(msg + " Logout and Login again.");
+                    }
+                }
+            });
+        });
+    });
+
+</script>

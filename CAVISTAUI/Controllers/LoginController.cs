@@ -73,5 +73,33 @@ namespace CAVISTAUI.Controllers
             }
             return View();
         }
+        public ActionResult LogOff()
+        {
+            if (Session["LoginUserID"] != null)
+            {
+                int UID = Convert.ToInt32(Session["LoginUserID"]);
+                //bl.BL_ExecuteParamSP("uspManageLoginDetails", 3, UID);
+                string APIurl = bl.Decrypt(ConfigurationManager.AppSettings["apiurl"].ToString());                
+                HttpClient _client = new HttpClient();
+                _client.BaseAddress = new Uri(APIurl);// APILink from app config
+                _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                HttpResponseMessage result = _client.GetAsync("signup/updatelogout?UID=" + UID).Result;
+                if (result.IsSuccessStatusCode)
+                {                   
+                }
+                else
+                {                    
+                }
+            }
+            HttpContext.Response.Cache.SetExpires(DateTime.UtcNow.AddMinutes(-1));
+            HttpContext.Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            HttpContext.Response.Cache.SetNoStore();
+            Session.Clear();
+            Session.Abandon();
+            Session.RemoveAll();
+
+            return RedirectToAction("Index", "Login");
+        }
     }
 }
