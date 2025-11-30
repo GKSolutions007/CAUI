@@ -415,7 +415,7 @@
                     <div class="modal-body">
                         Recovery Email :<b> <label id="lblresetemail" style="color:brown;"></label></b>
                         <div class="input-group" style="padding-top:15px;">
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                            @*<span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>*@
                             <input type="email" placeholder="Enter E-mail ID..." class="form-control" id="txtEmailID" />
                             <div id="divMessageemail" style="color:red" class="clrdivs"></div>
                         </div>
@@ -481,9 +481,7 @@
         $('#btnBatchClose').click(function (e) {
             modal.style.display = "none";
         });
-        $('#lnkfp').click(function (e) {
-            modal.style.display = "block";
-        });
+
         function checkPasswordMatch() {
             var password = $("#txtPassword").val();
             var confirmPassword = $("#txtCnfPassword").val();
@@ -576,14 +574,14 @@
                     },
                 });
             }
-        });        
+        });
         function SINValidation() {
             var IsValid = true;
             if ($("#txtLoginUserName").val() == "") {
                 IsValid = false;
             } else if ($("#txtLoginPassword").val() == "") {
                 IsValid = false;
-            } 
+            }
             return IsValid;
         }
         function Login(event) {
@@ -601,7 +599,7 @@
                         UserName: strusername, Password: strpassword
                     },
                     success: function (response) {
-                        
+
                         if (response != "") {
                             console.log(response[0]);
                             var ResMsgID = response[0].MsgID;
@@ -610,7 +608,7 @@
                                 setTimeout(() => {
                                     $.each(response[0].userinfo, function (i, item) {
                                         console.log("user row data : ", item);
-                                        window.location.href = '/ValidatePermission?ID=' + item.ID;                                        
+                                        window.location.href = '/ValidatePermission?ID=' + item.ID;
                                     });
                                 }, 1500);
                             }
@@ -628,8 +626,167 @@
                     },
                 });
             }
-            
+
         }
+        $('#lnkfp').click(function (e) {
+            if ($('#txtLoginUserName').val() == "") {
+                showErrorSnackbar("Enter User ID or E-mail ID")
+            } else {
+                $("#lblresetemail").text("");
+                $('#txtEmailID').val("");
+                modal.style.display = "none";
+                $("#txtEmailID").prop("disabled", false);
+                $('#btnfgGetCode').prop("disabled", false);
+                $("#txtOTP").prop("disabled", false);
+                $('#btnfgVerifyOTP').prop("disabled", false);
+                $('#txtOTP').val("");
+                $('.clrdivs').html("");
+                $("#dvverotp,#dvverpwd,#txtEmailID").hide();
+                $('#txtpwd').val("");
+                $('#txtCnfpwd').val("");
+                verifyfg(1, $('#txtLoginUserName').val(), "", "", "")
+            }
+        });
+    $("#btnfgGetCode").click(function () {
+        $('#divMessageemail').html('');
+        var IsValid = true;
+        if ($('#lblresetemail').text() == "") {
+            IsValid = false;
+            $('#txtEmailID').focus();
+            showErrorSnackbar('* Recovery E-Mail ID not found.');
+        }       
+        if (IsValid) {            
+            ValidateOTP(1, 0, $("#lblresetemail").text());
+        }
+    });
+        function ValidateOTP(nMode, nID = 0, strToMail = "", strOTP = "") {
+            $.ajax({
+                url: Aurl + "signup/manageotp",
+                type: 'GET',
+                datatype: 'json',
+                data: { Mode: nMode, FormName: "forgotpassword", ID: nID, ToMail: strToMail, OTP: strOTP },
+                success: function (data) {
+                    if (nMode == 1) {
+                        console.log("Data : ", eval(data))
+                        $.each(eval(data), function (i, items) {
+                            if (items.ID == "2") {
+                                $("#txtVerifyOTP").val(items.Val1);
+                                $("#dvverotp").show();
+                                $('#txtOTP').focus();
+                                $("#divMessagevercode").html(items.Msg);
+                                document.getElementById("divMessagevercode").style.color = "green";
+                                $("#txtEmailID").prop("disabled", true);
+                                $('#btnfgGetCode').prop("disabled", true);
+                            } else if (items.ID == "3" || items.ID == "1") {
+                                $("#divMessagevercode").html(items.Msg);
+                                document.getElementById("divMessagevercode").style.color = "red";
+                                modal.style.display = "none";
+                            }
+                        });
+                    }
+                    else if (nMode == 2) {
+                        $.each(data, function (i, items) {
+                            if (items.ID == "0") {
+                                showSuccessSnackbar(items.Msg);
+                                    $("#dvverpwd").show();
+                                    $('#txtpwd').focus();
+                                    $("#txtOTP").prop("disabled", true);
+                                    $('#btnfgVerifyOTP').prop("disabled", true);
+                                //modal.style.display = "none";
+                            } else {
+                                $('#txtOTP').focus();
+                                $("#dvverpwd").hide();
+                                $('#divMessageverotp').html('* OTP Incorrect...');
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    $('#btnfgVerifyOTP').click(function (e) {
+        $('#divMessageverotp').html('');
+        if ($('#txtOTP').val() == "") {
+            $('#divMessageverotp').html('* Enter Valid OTP...');
+            $('#txtOTP').focus();
+            $("#dvverpwd").hide();
+        } else {
+            ValidateOTP(2, $("#txtVerifyOTP").val(), $('#txtEmailID').val(), $('#txtOTP').val());            
+        }
+    });
+    $('#btnFGAccept').click(function (e) {
+        var IsValid = true;
+        $('#divMessagepwd').html('');
+        $('#divMessagecnfpwd').html('');
+        if ($('#txtpwd').val() == "") {
+            $('#divMessagepwd').html('* Password should not empty...');
+            $('#txtpwd').focus();
+            IsValid = false;
+        }
+        else if ($('#txtCnfpwd').val() == "") {
+            $('#divMessagecnfpwd').html('* Confirm Password should not empty...');
+            $('#txtCnfpwd').focus();
+            IsValid = false;
+        }
+        else if ($('#txtpwd').val() != $('#txtCnfpwd').val()) {
+            $('#divMessagecnfpwd').html('* Password & Confirm Password is mismatching...');
+            $('#txtCnfpwd').focus();
+            IsValid = false;
+        }
+        if (IsValid) {
+            verifyfg(3, $("#lblresetemail").text(), $('#txtEmailID').val(), $('#txtpwd').val(), "")
+        }
+    });
+    function verifyfg(nFlag, Param1, Param2, Param3, Param4) {
+        $.ajax({
+            //url: '@Url.Action("ManageForgotPassword", "SignUP")',
+            url: Aurl + "signup/manageforgotpassword",
+            type: 'GET',
+            datatype: 'json',
+            data: { Flag: nFlag, Val1: Param1, Val2: Param2, Val3: Param3, Val4: Param4 },
+            success: function (data) {
+                if (nFlag == 1) {
+                    $("#lblresetemail").text("");
+                    $.each(data, function (i, items) {
+                        if (items.ID == "2") {
+                            $("#lblresetemail").text(items.Email);
+                            modal.style.display = "block";
+
+                        } else if (items.ID == "3" || items.ID == "1") {
+                            showSuccessSnackbar(items.Msg)
+                            modal.style.display = "none";
+                        }
+                    });
+                }
+                else if (nFlag == 2) {
+                    $.each(data, function (i, items) {
+                        if (items.ID == "2") {
+                            $("#txtVerifyOTP").val(items.Val1);
+                            $("#dvverotp").show();
+                            $('#txtOTP').focus();
+                            $("#divMessagevercode").html(items.Msg);
+                            document.getElementById("divMessagevercode").style.color = "green";
+                            $("#txtEmailID").prop("disabled", true);
+                            $('#btnfgGetCode').prop("disabled", true);
+                        } else if (items.ID == "3" || items.ID == "1") {
+                            $("#divMessagevercode").html(items.Msg);
+                            document.getElementById("divMessagevercode").style.color = "red";
+                            modal.style.display = "none";
+                        }
+                    });
+                }
+                else if (nFlag == 3) {
+                    $.each(data, function (i, items) {
+                        if (items.ID == "1") {
+                            showSuccessSnackbar(items.Msg)
+                            modal.style.display = "none";
+                        } else {
+                            $("#divMessagecnfpwd").html(items.Msg)
+                        }
+                    });
+                }
+            }
+        });
+    }
     </script>
 </body>
 </html>
