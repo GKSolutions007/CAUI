@@ -461,7 +461,7 @@
     </div>
     <script>
     var Aurl = '@Session["APIurl"]';
-    var url = '@Session["url"]';
+        var url = '@Session["AbsURL"]';
         const signUpButton = document.getElementById('signUp');
         const signInButton = document.getElementById('signIn');
         const container = document.getElementById('container');
@@ -576,14 +576,14 @@
                     },
                 });
             }
-        });        
+        });
         function SINValidation() {
             var IsValid = true;
             if ($("#txtLoginUserName").val() == "") {
                 IsValid = false;
             } else if ($("#txtLoginPassword").val() == "") {
                 IsValid = false;
-            } 
+            }
             return IsValid;
         }
         function Login(event) {
@@ -601,16 +601,16 @@
                         UserName: strusername, Password: strpassword
                     },
                     success: function (response) {
-                        
                         if (response != "") {
                             console.log(response[0]);
                             var ResMsgID = response[0].MsgID;
-                            if (ResMsgID == "0") {
+                            if (ResMsgID == "0")
+                            {
                                 showSuccessSnackbar(response[0].Message + " Welcome " + response[0].userinfo[0].UserName);
                                 setTimeout(() => {
                                     $.each(response[0].userinfo, function (i, item) {
                                         console.log("user row data : ", item);
-                                        window.location.href = '/ValidatePermission?ID=' + item.ID;                                        
+                                        window.location.href = url+ '/ValidatePermission?ID=' + item.ID;
                                     });
                                 }, 1500);
                             }
@@ -628,7 +628,7 @@
                     },
                 });
             }
-            
+
         }
     </script>
 </body>
