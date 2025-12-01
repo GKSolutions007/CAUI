@@ -4,3 +4,9 @@ D:\CA_VISTA\CAUI\BusinessLayer\obj\Debug\BusinessLayer.csproj.AssemblyReference.
 D:\CA_VISTA\CAUI\BusinessLayer\obj\Debug\BusinessLayer.csproj.CoreCompileInputs.cache
 D:\CA_VISTA\CAUI\BusinessLayer\obj\Debug\BusinessLayer.dll
 D:\CA_VISTA\CAUI\BusinessLayer\obj\Debug\BusinessLayer.pdb
+D:\CA  VISTA\CAUI\BusinessLayer\bin\Debug\BusinessLayer.dll
+D:\CA  VISTA\CAUI\BusinessLayer\bin\Debug\BusinessLayer.pdb
+D:\CA  VISTA\CAUI\BusinessLayer\obj\Debug\BusinessLayer.csproj.AssemblyReference.cache
+D:\CA  VISTA\CAUI\BusinessLayer\obj\Debug\BusinessLayer.csproj.CoreCompileInputs.cache
+D:\CA  VISTA\CAUI\BusinessLayer\obj\Debug\BusinessLayer.dll
+D:\CA  VISTA\CAUI\BusinessLayer\obj\Debug\BusinessLayer.pdb
