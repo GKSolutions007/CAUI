@@ -1,7 +1,1199 @@
-﻿
+﻿@model CAVISTAUI.Models.SingleMasterModel
+
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Customer";
 }
+@*<script src="~/Scripts/jquery-3.7.1.js"></script>*@
+<link href="~/GKBSGrid/css/gridui.css" rel="stylesheet" />
+<script src="~/GKBSGrid/js/gridui.js"></script>
 
-<h2>Customer</h2>
+<style>
+    td {
+        font-size: 11px;
+    }
 
+    input[type=number] {
+        text-align: right;
+    }
+
+        input[type=number]::placeholder {
+            text-align: left;
+        }
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+    /* The Modal (background) */
+    .modalBatch {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 10000; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content/Box */
+    @@media only screen and (min-width: 600px) {
+        .modalBatch-content {
+            background-color: #ffffff;
+            margin: 3% auto; /* 15% from the top and centered */
+            padding: 2px;
+            border: 1px solid #888;
+            width: 75%; /* Could be more or less, depending on screen size */
+            height: 70%;
+            top: 5%;
+            overflow: auto;
+        }
+    }
+
+    @@media only screen and (max-width: 600px) {
+        .modalBatch-content {
+            background-color: #ffffff;
+            margin: 10% auto; /* 15% from the top and centered */
+            padding: 3px;
+            border: 1px solid #888;
+            width: 95%; /* Could be more or less, depending on screen size */
+            height: 80%;
+            top: 20%;
+            overflow: auto;
+        }
+    }
+    /* The Close Button */
+    .closefg {
+        color: #aaa;
+        float: right;
+        font-size: 10px;
+        font-weight: bold;
+    }
+
+        .closefg:hover,
+        .closefg:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    .form-label {
+        position: relative;
+        display: block;
+        clear: both;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .labelup {
+        -webkit-transform: translateY(50%);
+        -moz-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+        -o-transform: translateY(-50%);
+        transform: translateY(50%);
+        -webkit-transition: all 0.2s ease-in-out;
+        -moz-transition: all 0.2s ease-in-out;
+        transition: all 0.2s ease-in-out;
+        position: absolute;
+        top: -40%;
+        left: 1em;
+        background: #fffefe;
+        color: #2b2828;
+        font-size: 1em;
+        cursor: text;
+        pointer-events: none;
+        font-family: sans-serif;
+        font-weight: 400;
+    }
+    .labelupaddress {
+        -webkit-transform: translateY(50%);
+        -moz-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+        -o-transform: translateY(-50%);
+        transform: translateY(50%);
+        -webkit-transition: all 0.2s ease-in-out;
+        -moz-transition: all 0.2s ease-in-out;
+        transition: all 0.2s ease-in-out;
+        position: absolute;
+        top: -15%;
+        left: 1em;
+        background: #fffefe;
+        color: #2b2828;
+        font-size: 1em;
+        cursor: text;
+        pointer-events: none;
+        font-family: sans-serif;
+        font-weight: 400;
+    }
+</style>
+<style>
+    .button-tab {
+        color: rgb(0, 0, 0);
+        background-color: rgb(255, 255, 255);
+    }
+
+        .button-tab:hover {
+            background-color: rgb(218, 218, 218);
+        }
+
+        .button-tab:active {
+            background-color: rgb(165, 165, 165);
+        }
+
+    .popup {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+    }
+
+    .popup-content {
+        background: #fff;
+        margin: 10% auto;
+        padding: 20px;
+        width: 890px;
+        height: 350px;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    #close {
+        float: right;
+        cursor: pointer;
+        font-size: 20px;
+    }
+</style>
+<body>
+
+    @Html.HiddenFor(model => model.Add, new { @autocomplete = "off", @class = "form-control", @id = "txtAddID" })
+    @Html.HiddenFor(model => model.Modify, new { @autocomplete = "off", @class = "form-control", @id = "txtModifyID" })
+    @Html.HiddenFor(model => model.View, new { @autocomplete = "off", @class = "form-control", @id = "txtViewID" })
+    @Html.HiddenFor(model => model.FormName, new { @autocomplete = "off", @class = "form-control", @id = "txtFormName" })
+    @Html.HiddenFor(model => model.ID, new { @autocomplete = "off", @class = "form-control FormclrField", @id = "txtID" })
+    @Html.HiddenFor(model => model.ViewPassword, new { @autocomplete = "off", @class = "form-control", @id = "txtViewPassword" })
+    
+    @*<h4 id="MainHeading">@Html.DisplayFor(model => model.FormName)</h4>
+        <hr />*@
+    <div class="toastBox"></div>
+    <div class="row" style="padding-top:10px;">
+        <div style="padding-bottom: 10px; padding-left: 15px; float: left ">
+            <h4 id="MainHeading">@Html.DisplayFor(model => model.FormName)</h4>
+        </div>
+        <div style="padding-bottom: 10px; padding-right: 15px; float: right">
+            <button id="btnAdd" class="btn btn-info"><span class="glyphicon glyphicon-plus" style="color: white"></span>&#x2009;Add New</button>
+        </div>
+    </div>
+
+    <div id="my-grid" style="height: 500px; width: 100%;"></div>
+    <div class="modalBatch" id="myModalfg">
+        <div class="modal-dialog" style="width:auto;">
+            <div class="modalBatch-content">
+                <!-- Modal Header -->
+                <div class="modal-header" style="background-color:bisque">
+                    <button type="button" class="closefg">&times;</button>
+                    <h5 class="modal-title" style="color:black" id="lblPopupheading"><b>Customer</b></h5>
+                    @*<hr />*@
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <!-- TAB HEADERS -->
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#tab-cust-details" data-toggle="tab">Customer Details</a></li>
+                        <li><a href="#tab-address" data-toggle="tab">IT Details</a></li>
+                        <li><a href="#tab-contact" data-toggle="tab">GST Details</a></li>
+                        <li><a href="#tab-other" data-toggle="tab">Other Details</a></li>
+                    </ul>
+
+                    <!-- TAB CONTENT -->
+                    <div class="tab-content" style="margin-top:15px;">
+
+                        <!-- TAB 1 -->
+                        <div id="tab-cust-details" class="tab-pane fade in active">
+                            <div class="col-sm-12 col-md-12 col-lg-12" style="padding-bottom:10px;">
+                                <div class="col-sm-12 col-md-4 col-lg-4">
+                                    <table class="table" style="width:100%">
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <span class="form-label">
+                                                        <input class="form-control FormclrField" type="text" id="txtCode" placeholder="">
+                                                        <label class="labelup">Customer Code*</label>
+                                                    </span>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnCode" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:15px;padding-right:7px" colspan="2">
+                                                <label>Customer Group Code*</label>
+                                                <div>
+                                                    <label><input checked type="radio" id="rdoTaxAudit" name="customerGroupCode" value="Tax Audit"> Tax Audit</label>
+                                                    &nbsp;&nbsp;
+                                                    <label><input type="radio" id="rdoNonTaxAudit" name="customerGroupCode" value="Non Tax Audit"> Non Tax Audit</label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <span class="form-label">
+                                                    <input type="text" id="txtFirstName" class="form-control FormclrField">
+                                                    <label class="labelup">First Name *</label>
+                                                </span>
+                                                <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnFirstName" class="clrdivs"></div>
+
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <span class="form-label">
+                                                    <input type="text" id="txtFatherName" class="form-control FormclrField">
+                                                    <label class="labelup">Father Name *</label>
+                                                </span>
+                                                <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorFatherName" class="clrdivs"></div>
+
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-sm-12 col-md-4 col-lg-4">
+                                    <table class="table" style="width:100%">
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <span class="form-label">
+                                                    <select class="form-control FormclrcmbField" id="cmbConstitution">
+                                                        <option value="">--Select--</option>
+                                                        <option value="1">Individual</option>
+                                                        <option value="2">Private Company</option>
+                                                        <option value="3">Partneship Firm</option>
+                                                        <option value="4">Trust</option>
+                                                        <option value="5">HUF</option>
+                                                        <option value="6">AOP</option>
+                                                        <option value="7">LLP</option>
+                                                    </select>
+                                                    <label class="labelup">Constitution *</label>
+                                                </span>
+                                                <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnConstitution" class="clrdivs"></div>
+
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <span class="form-label">
+                                                        <input class="form-control FormclrField" type="email" id="txtBusinessName" placeholder="">
+                                                        <label class="labelup">Business Name</label>
+                                                    </span>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnBusinessName" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <span class="form-label">
+                                                        <input class="form-control FormclrField" type="date" id="txtDateRegIncorp" placeholder="">
+                                                        <label class="labelup">Date of REG / INCORP</label>
+                                                    </span>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnDateRegIncorp" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <span class="form-label">
+                                                        <input class="form-control FormclrField" type="text" id="txtAccountManager" placeholder="">
+                                                        <label class="labelup">Account Manager</label>
+                                                    </span>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnAccountManager" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-sm-12 col-md-4 col-lg-4">
+                                    <table class="table" style="width:100%">
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <span class="form-label">
+                                                        <input class="form-control FormclrField" type="number" id="txtCPMobileNo" placeholder="" maxlength="12"
+                                                               oninput="javascript: if (this.value.length > this.maxLength) { this.value = this.value.slice(0, this.maxLength); }">
+                                                        <label class="labelup">Mobile No</label>
+                                                    </span>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnCPMobileNo" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <span class="form-label">
+                                                    <input type="email" id="txtCPEmail" class="form-control FormclrField">
+                                                    <label class="labelup">Email </label>
+                                                </span>
+                                                <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnCPEmail" class="clrdivs"></div>
+
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <span class="form-label">
+                                                        <input class="form-control FormclrField" type="date" id="txtDOB" placeholder="">
+                                                        <label class="labelup">Date of Birth</label>
+                                                    </span>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnDOB" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+
+                                        
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 2 -->
+                        <div id="tab-address" class="tab-pane fade">
+                            <div class="col-sm-12 col-md-12 col-lg-12" style="padding-bottom:10px;">
+                                <div class="col-sm-12 col-md-4 col-lg-4">
+                                    <table class="table" style="width:100%">
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <span class="form-label">
+                                                        <input class="form-control FormclrField" type="text" id="txtPanno" placeholder="" maxlength="10">
+                                                        <label class="labelup">PAN NO</label>
+                                                    </span>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnPanno" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <span class="form-label">
+                                                        <input class="form-control FormclrField" type="text" id="txtBusinessPANNO" placeholder="" maxlength="10">
+                                                        <label class="labelup">Business PAN No</label>
+                                                    </span>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnBusinessPANNO" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <span class="form-label">
+                                                        <input class="form-control FormclrField" type="text" id="txtITFileNo" placeholder="">
+                                                        <label class="labelup" for="txtCode">IT File No</label>
+                                                    </span>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnITFileNo" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <span class="form-label">
+                                                    <input type="text" id="txtITRegEmail" class="form-control FormclrField">
+                                                    <label class="labelup">IT Reg Email </label>
+                                                </span>
+                                                <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnITRegEmail" class="clrdivs"></div>
+
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <span class="form-label">
+                                                    <input type="number" id="txtITRegContactNo" class="form-control FormclrField" maxlength="12"
+                                                           oninput="javascript: if (this.value.length > this.maxLength) { this.value = this.value.slice(0, this.maxLength); }">
+                                                    <label class="labelup">IT Reg Contact No</label>
+                                                </span>
+                                                <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorITRegContactNo" class="clrdivs"></div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-sm-12 col-md-4 col-lg-4">
+                                    <table class="table" style="width:100%">
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <span class="form-label">
+                                                    <input type="text" id="txLLIPINNo" class="form-control FormclrField">
+                                                    <label class="labelup">LLI PIN No</label>
+                                                </span>
+                                                <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnLLIPINNo" class="clrdivs"></div>
+
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <span class="form-label">
+                                                    <input type="text" id="txTANNo" class="form-control FormclrField">
+                                                    <label class="labelup">TAN No</label>
+                                                </span>
+                                                <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnTANNo" class="clrdivs"></div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <span class="form-label">
+                                                    <input type="text" id="txtCINNo" class="form-control FormclrField">
+                                                    <label class="labelup">CIN No</label>
+                                                </span>
+                                                <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnCINNo" class="clrdivs"></div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <span class="form-label">
+                                                    <input type="text" id="txDINNo" class="form-control FormclrField">
+                                                    <label class="labelup">DIN No</label>
+                                                </span>
+                                                <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnDINNo" class="clrdivs"></div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                        <div class="col-sm-12 col-md-4 col-lg-4">
+                                            <table class="table" style="width:100%">
+                                               
+
+
+                                                <tr class="bgclrfortr">
+                                                    <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                        <div>
+                                                            <span class="form-label">
+                                                                <input class="form-control FormclrField" type="email" id="txtITUserName" placeholder="">
+                                                                <label class="labelup">IT User Name</label>
+                                                            </span>
+                                                            <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnITUserName" class="clrdivs"></div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr class="bgclrfortr">
+                                                    <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                        <div>
+                                                            <div class="form-label">
+                                                                <span onclick="togglePassword('txtITPassword',this)" id="viewITPassword"
+                                                                      style="position:absolute; right:20px; top:60%; transform:translateY(-50%); cursor:pointer;">
+                                                                    <i class="fa fa-eye"></i>
+                                                                </span>
+                                                                <input class="form-control FormclrField" type="password" id="txtITPassword" placeholder="">
+                                                                <label class="labelup">IT Password</label>
+                                                            </div>
+                                                            <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnITPassword" class="clrdivs"></div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                </div>
+                            </div>
+
+                        <!-- TAB 3 -->
+                        <div id="tab-contact" class="tab-pane fade">
+                            <div class="col-sm-12 col-md-12 col-lg-12" style="padding-bottom:10px;">
+                                <div class="col-sm-12 col-md-4 col-lg-4">
+                                    <table class="table" style="width:100%">
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <span class="form-label">
+                                                        <input class="form-control FormclrField" type="text" id="txtGSTIN" placeholder="" maxlength="15">
+                                                        <label class="labelup">GST No</label>
+                                                    </span>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnGSTIN" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <span class="form-label">
+                                                        <input class="form-control FormclrField" type="text" id="txtGSTFileNo" placeholder="">
+                                                        <label class="labelup" for="txtCode">GST File No</label>
+                                                    </span>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnGSTFileNo" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <span class="form-label">
+                                                    <input type="email" id="txtGSTRegEmail" class="form-control FormclrField">
+                                                    <label class="labelup">GST Reg Email </label>
+                                                </span>
+                                                <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnGSTRegEmail" class="clrdivs"></div>
+
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <span class="form-label">
+                                                    <input type="text" id="txtGSTRegContactNo" class="form-control FormclrField" maxlength="12"
+                                                           oninput="javascript: if (this.value.length > this.maxLength) { this.value = this.value.slice(0, this.maxLength); }">
+                                                    <label class="labelup">GST Reg Contact No</label>
+                                                </span>
+                                                <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorGSTRegContactNo" class="clrdivs"></div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-sm-12 col-md-4 col-lg-4">
+                                    <table class="table" style="width:100%">
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <span class="form-label">
+                                                        <input class="form-control FormclrField" type="date" id="txtGSTRegDate" placeholder="">
+                                                        <label class="labelup">GST Reg Date</label>
+                                                    </span>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnGSTRegDate" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <div class="form-label">
+                                                        <input class="form-control FormclrField" type="text" id="txtGSTRegType" placeholder="">
+                                                        <label class="labelup">GST Reg Type</label>
+                                                    </div>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnGSTRegType" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <span class="form-label">
+                                                        <input class="form-control FormclrField" type="date" id="txtGSTDateofOPT" placeholder="">
+                                                        <label class="labelup">Date of OPT</label>
+                                                    </span>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnGSTDateofOPT" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-sm-12 col-md-4 col-lg-4">
+                                    <table class="table" style="width:100%">
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <span class="form-label">
+                                                        <input class="form-control FormclrField" type="email" id="txtGSTUserName" placeholder="">
+                                                        <label class="labelup">GST User Name</label>
+                                                    </span>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnGSTUserName" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <div class="form-label">
+                                                        <span onclick="togglePassword('txtGSTPassword',this)" id="viewGSTPassword"
+                                                              style="position:absolute; right:20px; top:60%; transform:translateY(-50%); cursor:pointer;">
+                                                            <i class="fa fa-eye"></i>
+                                                        </span>
+                                                        <input class="form-control FormclrField" type="password" id="txtGSTPassword" placeholder="">
+                                                        <label class="labelup">GST Password</label>
+                                                    </div>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnGSTPassword" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- TAB 4 -->
+                        <div id="tab-other" class="tab-pane fade">
+                            <div class="col-sm-12 col-md-12 col-lg-12" style="padding-bottom:10px;">
+                                <div class="col-sm-12 col-md-4 col-lg-4">
+                                    <table class="table" style="width:100%">
+
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <span class="form-label">
+                                                    <input type="number" id="txtCPAdditionalMobileNo" class="form-control FormclrField" maxlength="12"
+                                                           oninput="javascript: if (this.value.length > this.maxLength) { this.value = this.value.slice(0, this.maxLength); }">
+                                                    <label class="labelup">Additional Mobile No</label>
+                                                </span>
+                                                <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorCPAdditionalMobileNo" class="clrdivs"></div>
+                                            </td>
+                                        </tr>
+
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <span class="form-label">
+                                                    <input type="email" id="txtCPAdditionalEmail" class="form-control FormclrField">
+                                                    <label class="labelup">Additional Email</label>
+                                                </span>
+                                                <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnCPAdditionalEmail" class="clrdivs"></div>
+
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <div class="form-label">
+                                                        <textarea class="form-control FormclrField" id="txtAddress" rows="4" placeholder="Address..."></textarea>
+                                                        <label class="labelupaddress">Address</label>
+                                                    </div>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnAddress" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-sm-12 col-md-4 col-lg-4">
+                                    <table class="table" style="width:100%">
+
+
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <span class="form-label">
+                                                        <input class="form-control FormclrField" type="text" id="txtCity" placeholder="">
+                                                        <label class="labelup">City</label>
+                                                    </span>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnCity" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <span class="form-label">
+                                                    <select class="form-control FormclrcmbField" id="cmbStateName">
+                                                        <option value="0">--Select--</option>
+                                                    </select>
+                                                    <label class="labelup">State</label>
+                                                </span>
+                                                <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnStateName" class="clrdivs"></div>
+
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" width="60%">
+                                                <div>
+                                                    <span class="form-label">
+                                                        <input class="form-control FormclrField" type="text" id="txtCountry" placeholder="">
+                                                        <label class="labelup">Country</label>
+                                                    </span>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnCountry" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                            <td style="border:none;padding-left:12px;padding-right:7px">
+                                                <div>
+                                                    <span class="form-label">
+                                                        <input class="form-control FormclrField" type="number" id="txtPincode" placeholder="" maxlength="6"
+                                                               oninput="javascript: if (this.value.length > this.maxLength) { this.value = this.value.slice(0, this.maxLength); }">
+                                                        <label class="labelup">Pincode</label>
+                                                    </span>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnPincode" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border:none" colspan="2">
+                                                <label for="chkActive">Active :</label>
+                                                <input type="checkbox" id="chkActive" checked disabled />
+                                                <div class="clrdiv" id="dvErrorActive" style="color:red"></div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-sm-12 col-md-4 col-lg-4">
+                                    <table class="table" style="width:100%">
+                                        
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <span class="form-label">
+                                                    <label><b>Attachments :</b></label>
+
+                                                    <input type="file" multiple id="txtAttachments" />
+                                                </span>
+                                                <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnAttachments" class="clrdivs"></div>
+
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <span class="form-label">
+                    </span>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer" style="background-color:skyblue">
+                    <div style="padding-top:5px" align="right">
+                        <button type="button" class="btn btn-danger" id="btnClear"><span class="glyphicon glyphicon-refresh"> Clear</span></button>
+                        <button type="button" class="btn btn-success" id="btnSave"><span class="glyphicon glyphicon-saved"> Save</span></button>
+                        <button type="button" class="btn btn-warning" id="btnClose"><span class="glyphicon glyphicon-remove"> Close</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    function togglePassword(inputId, toggleIcon) {
+        const input = document.getElementById(inputId);
+        const icon = toggleIcon.querySelector('i');
+
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            input.type = "password";
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+        var today = new Date().toISOString().split("T")[0];
+        document.querySelectorAll('input[type="date"]').forEach(function (input) {
+            input.max = today;
+        });
+    });
+    var Aurl = '@Session["APIurl"]';
+    if ($("#txtAddID").val() == 0) {
+        $("#trAdd").hide();
+        $("#btnAdd").hide();
+    }
+    var EnableEdit = true, EnableView = true;
+    if ($("#txtModifyID").val() == 0) {
+        //Table.column(8).visible(false);
+        EnableEdit = false;
+    }
+    if ($("#txtViewID").val() == 0) {
+        //Table.column(9).visible(false);
+        EnableView = false;
+    }
+    if ($("#txtModifyID").val() == 0 && $("#txtViewID").val() == 0 && $("#txtAddID").val() == 1) {
+        $("#my-grid").hide();
+    }
+    if ($("#txtViewPassword").val() == 0) {
+        $("#viewGSTPassword,#viewITPassword").hide();               
+    }
+    
+    const data = [];
+    var ActionVisible = (!EnableEdit && !EnableView);
+    const columns = [
+        { field: 'ID', header: 'ID', type: 'label', width: 20, align: 'left', visible: false, EnableColumnMenu: false ,ShowinColumnOption : false},
+        { field: 'CustomerCode', header: 'Customer Code', type: 'label', width: 150, align: 'left', visible: true, EnableColumnMenu: true, ShowinColumnOption: true },
+        { field: 'FirstName', header: 'First Name', type: 'label', width: 200, align: 'left', visible: true, EnableColumnMenu: true, ShowinColumnOption: true },
+        { field: 'Constitution', header: 'Constitution', type: 'label', width: 150, align: 'left', visible: true, EnableColumnMenu: true, ShowinColumnOption: true },
+        { field: 'NameofBusiness', header: 'Business Name', type: 'label', width: 180, align: 'left', visible: true, EnableColumnMenu: true, ShowinColumnOption: true },
+        { field: 'MobileNo', header: 'Mobile No', type: 'label', width: 150, align: 'left', visible: true, EnableColumnMenu: true, ShowinColumnOption: true },
+        { field: 'Active', header: 'Active', type: 'label', width: 100, align: 'left', visible: true, EnableColumnMenu: true, ShowinColumnOption: true },
+        { field: 'User', header: 'User', type: 'label', width: 150, align: 'left', visible: true, EnableColumnMenu: true, ShowinColumnOption: true },
+        { header: 'Action', type: 'action3dots', width: 80, align: 'center', visible: !ActionVisible, specialColumn: true, ShowinColumnOption: false },
+    ];
+    const allGridActions = [
+        {
+            icon: '👁️',
+            title: 'View Details',
+            className: 'dg-action-view',
+            // 💡 NEW TAG: This action will be rendered as a single icon
+            displayType: 'menu_item',
+            visible: EnableView,
+            handler: (rowData) => {
+                nMode = 3;
+                $(".clrdiv").html("");
+                $("#lblPopupheading").text("View Customer");
+                var ID = rowData.ID;//[0];
+                GetData(3, ID);
+                $(".FormclrField,.FormclrcmbField,input[type=radio]").prop("disabled", true);
+                $("#chkActive,#btnSave,#btnClear").prop("disabled", true);
+                modal.style.display = "block";
+
+            }
+        },
+        {
+            icon: '📝',
+            title: 'Edit Details',
+            className: 'dg-action-pencil',
+            // 💡 NEW TAG: This action will be rendered as a single icon
+            displayType: 'menu_item',
+            visible: EnableEdit,
+            handler: (rowData) => {
+                $(".clrdiv").html("");
+                nMode = 2;
+                $("#lblPopupheading").text("Edit Customer");
+                var ID = rowData.ID;//[0];
+                GetData(3, ID);
+                $(".FormclrField,.FormclrcmbField,input[type=radio]").prop("disabled", false);
+                
+                $("#chkActive,#btnSave").prop("disabled", false);
+                $("#btnClear").prop("disabled", true);
+                modal.style.display = "block";
+            }
+        },
+    ];
+
+    // Split the actions for easy use in renderBody and showRowActionsMenu
+    const singleIconAction = allGridActions.find(a => a.displayType === 'single_icon' && a.visible == true);
+    const menuActions = allGridActions.filter(a => a.displayType === 'menu_item' && a.visible == true);
+
+    var grid = new GKBSDynamicGrid('#my-grid', columns, data, {
+        enablePagination: true,
+        pageSize: 10,
+        enableSearch: true,
+        stickyToWindow: true,
+        enableExport: false,
+        enablePrint: false,
+        enableColumnsBtn: true,  // Controls the '⚙️ Columns' button (Assuming you want to rename enableColumnVisibility)
+        enableAddRow: false,      // 💡 NEW: Controls '➕ Add Row'
+        enableRemoveRow: false,   // 💡 NEW: Controls '➖ Remove Selected'
+        enableSorting: true,
+        singleIconAction: singleIconAction, // Pass the single View action
+        rowActionsMenu: menuActions,       // Pass the Delete/Print actions
+        //onCellChange: handleCellUpdate,
+    });
+    var arrData = [];
+    var UID = '@Session["LoginUserID"]';
+    var RID = '@Session["RoleID"]';
+    var nMode = 1;
+    GetData(1, 0);
+    GetData(2, 0);
+    //GetData(7, RID,0);
+    function GetData(nMode,strName,DepID = 0) {
+        $.ajax({
+            url: Aurl + "customer/get",
+            type: 'get',
+            contentType: 'json',
+            data: {Mode: nMode, ID: strName },            
+            success: function (data) {
+                if (nMode == 1) {
+                    console.log("data ", eval(data));
+                    var response = eval(data);
+                    var Constlist = eval(response[0]);
+                    var Statelist = eval(response[1]);
+                    $('#cmbConstitution,#cmbStateName').find("option").remove();
+                    $('#cmbConstitution,#cmbStateName').append($('<option/>', {
+                        value: 0,
+                        text: "-- Select --",
+                        class: ""
+                    }));
+                    $.each(Constlist, function (i, items) {
+                        $('#cmbConstitution').append($('<option/>', {
+                            value: items.ID,
+                            text: items.Name,
+                        }));
+                    });
+                    $.each(Statelist, function (i, items) {
+                        $('#cmbStateName').append($('<option/>', {
+                            value: items.StateID,
+                            text: items.StateName,
+                        }));
+                    });
+                }
+                else if (nMode == 2) {
+                    var arrUsersData = [];
+                    //Table.draw().clear();
+                    if (data.length > 0) {
+                        arrUsersData = eval(data)
+                        $.each(arrUsersData, function (i, items) {
+                            //arrData[i] = items.UserName;
+                            var al = {
+                                "label": items.UserName,
+                                "id": items.ID,
+                            }
+                            arrData.push(al);
+                        });
+                        console.log("arrUsersData : ", arrUsersData);
+                        grid = new GKBSDynamicGrid('#my-grid', columns, arrUsersData, {
+                            enablePagination: true,
+                            pageSize: 10,
+                            enableSearch: true,
+                            stickyToWindow: true,
+                            enableExport: false,
+                            enablePrint: false,
+                            enableColumnsBtn: true,
+                            enableAddRow: false,
+                            enableRemoveRow: false,
+                            enableSorting: true,
+                            singleIconAction: singleIconAction,
+                            rowActionsMenu: menuActions,
+                            //onCellChange: handleCellUpdate,
+                        });
+                    }
+                    else {
+                        showErrorSnackbar("No Records Found");
+                    }
+                }
+                else if (nMode == 3) {
+                    $.each(eval(data), function (i, items) {
+                        console.log("User info ", items)
+                        $("#txtID").val(items.ID),
+                            $('#txtCode').val(items.CustomerCode),
+                            $("#rdoTaxAudit").prop("checked", items.CustomerGroupCode == 1);
+                            $('#txtFirstName').val(items.FirstName),
+                            $('#txtFatherName').val(items.FatherName),
+                            $('#cmbConstitution').val(items.Constitution),
+                            $('#txtBusinessName').val(items.NameofBusiness),
+                            $('#txtBusinessPANNO').val(items.BusinessPanno),
+                            $('#txtGSTIN').val(items.GSTNo),
+                            $('#txtPanno').val(items.PANno),
+                            $('#txtDateRegIncorp').val(items.DateRegorIncorp),
+                            $('#txtDOB').val(items.DOB),
+                            $('#txtAccountManager').val(items.AccountManage),
+
+                            $('#txtITUserName').val(items.ITUserName),
+                            $('#txtITPassword').val(items.ITPassword),
+                            $('#txtITFileNo').val(items.ITFileNo),
+                            $('#txtITRegEmail').val(items.ITRegEmailID),
+                            $('#txtITRegContactNo').val(items.ITRegContactNo),
+
+                            $('#txtGSTFileNo').val(items.GSTFileNo),
+                            $('#txtGSTUserName').val(items.GSTUserName),
+                            $('#txtGSTPassword').val(items.GSTPassword),
+                            $('#txtGSTRegDate').val(items.GSTRegDate),
+                            $('#txtGSTRegType').val(items.GSTRegType),
+                            $('#txtGSTDateofOPT').val(items.DateofOPT),
+                            $('#txtGSTRegEmail').val(items.GSTRegEmailID),
+                            $('#txtGSTRegContactNo').val(items.GSTRegContactNo),
+
+                            $('#txtCPMobileNo').val(items.MobileNo),
+                            $('#txtCPAdditionalMobileNo').val(items.AddMobileNo),
+                            $('#txtCPEmail').val(items.EmailID),
+                            $('#txtCPAdditionalEmail').val(items.AddEmailID),
+                            $('#txLLIPINNo').val(items.LLIPINno),
+                            $('#txTANNo').val(items.TANNo),
+                            $('#txtCINNo').val(items.CINNo),
+                            $('#txDINNo').val(items.DINNo),
+                            $('#txtAddress').val(items.Address),
+                            $('#txtCity').val(items.City),
+                            $('#cmbStateName').val(items.State),
+                            $('#txtCountry').val(items.Country),
+                            $('#txtPincode').val(items.Pincode),
+                            $("#chkActive").prop("checked", items.Active);
+                    });
+                }                
+            }, error: function (data) {
+                if (data.status == "401") {
+                    var msg = data.responseJSON.Message;
+                    //showErrorSnackbar(msg + " Logout and Login again.");
+                }
+            }
+        });
+    }
+    function displayResult(item) {
+        $('.alert').show().html('You selected <strong>' + item.value + '</strong>: <strong>' + item.text + '</strong>');
+    }
+
+    var modal = document.getElementById("myModalfg");
+    var span = document.getElementsByClassName("closefg")[0];
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+    function CloseForm() {
+        modal.style.display = "none";
+    }
+
+    $('#btnClose').click(function (e) {
+        //if (ClosecfFocus != 3) { CloseConfirmDialogMsg("Do you want to close?"); } else { CloseForm(); }
+        CloseForm();
+    });
+
+    $("#btnAdd").click(function () {
+        nMode = 1;
+        $("#chkActive,#btnSave,#cmbRole,#btnClear,.FormclrField,.FormclrcmbField,input[type=radio]").prop("disabled", false);
+        $("#lblPopupheading").text("Add Customer");
+        modal.style.display = "block";
+        ClearForm();
+    });
+    $('#btnClear').click(function (e) {
+        //if (cfFocus != 3) { ClearConfirmDialogMsg("Do you want to clear?"); } else { ClearForm(); }
+        ClearForm();
+    });
+    function ClearForm() {
+        $(".FormclrField").val("");
+        $(".FormclrcmbField").val(0);
+        $("#chkActive").prop("checked", true);
+        $("#chkActive").prop("disabled", nMode != 2);
+        $(".clrdivs").html("");
+        $("#cmbRole").val();
+        $("#txtUserID").focus();
+        if (nMode != 1)
+            modal.style.display = "none";
+    }
+    $("#btnSave").click(function () {
+        $(".clrdiv").html("");
+        var IsValid = true, ChkFormation = true;
+        if ($("#txtCode").val() == "") {
+            IsValid = false;
+            $("#divErrorOnCode").html("Customer Code should not be empty");
+            showErrorSnackbar("Customer Code should not be empty");
+        }
+        if ($("#txtFirstName").val() == "") {
+            IsValid = false;
+            $("#divErrorOnFirstName").html("First Name should not be empty");
+            showErrorSnackbar("First Name should not be empty");
+        }
+        if ($("#txtFatherName").val() == "") {
+            IsValid = false;
+            $("#divErrorFatherName").html("Father Name should not be empty");
+            showErrorSnackbar("Father Name should not be empty");
+        }
+        if ($("#cmbConstitution").val() == 0) {
+            IsValid = false;
+            $("#divErrorOnConstitution").html("Select valid Constitution");
+            showErrorSnackbar("Select valid Constitution");
+        }
+        ChkFormation = GSTINValidation($("#txtGSTIN"), $("#divErrorOnGSTIN"), false);
+        if (!ChkFormation) {
+            IsValid = false;
+        }
+        ChkFormation = PANValidation($("#txtPanno"), $("#divErrorOnPanno"), false);
+        if (!ChkFormation) {
+            IsValid = false;
+        }
+        ChkFormation = PANValidation($("#txtBusinessPANNO"), $("#divErrorOnBusinessPANNO"), false);
+        if (!ChkFormation) {
+            IsValid = false;
+        }
+        ChkFormation = EmailValidation($("#txtCPEmail"), $("#divErrorOnCPEmail"), false);
+        if (!ChkFormation) {
+            IsValid = false;
+        }
+        ChkFormation = MobilenoValidation($("#txtCPMobileNo"), $("#divErrorOnCPMobileNo"), false);
+        if (!ChkFormation) {
+            IsValid = false;
+        }
+        ChkFormation = EmailValidation($("#txtITRegEmail"), $("#divErrorOnITRegEmail"), false);
+        if (!ChkFormation) {
+            IsValid = false;
+        }
+        ChkFormation = MobilenoValidation($("#txtITRegContactNo"), $("#divErrorITRegContactNo"), false);
+        if (!ChkFormation) {
+            IsValid = false;
+        }
+        ChkFormation = EmailValidation($("#txtGSTRegEmail"), $("#divErrorOnGSTRegEmail"), false);
+        if (!ChkFormation) {
+            IsValid = false;
+        }
+        ChkFormation = MobilenoValidation($("#txtGSTRegContactNo"), $("#divErrorGSTRegContactNo"), false);
+        if (!ChkFormation) {
+            IsValid = false;
+        }
+        ChkFormation = PINCodeValidation($("#txtPincode"), $("#divErrorOnPincode"), false);
+        if (!ChkFormation) {
+            IsValid = false;
+        }
+        ChkFormation = MobilenoValidation($("#txtCPAdditionalMobileNo"), $("#divErrorCPAdditionalMobileNo"), false);
+        if (!ChkFormation) {
+            IsValid = false;
+        }
+        ChkFormation = EmailValidation($("#txtCPAdditionalEmail"), $("#divErrorOnCPAdditionalEmail"), false);
+        if (!ChkFormation) {
+            IsValid = false;
+        }
+        if (IsValid) {
+            //if (cfFocus != 3) { ConfirmDialogMsg("Do you want to save data?"); } else { SaveData(); }
+            SaveData();
+        }
+    });
+
+    function SaveData() {
+        $("#btnSave").prop("disabled", true);
+        $(".clrdiv").html("");
+        var lstMaster = {
+            Mode: nMode,
+            ID: $("#txtID").val(),
+            CustomerCode: $('#txtCode').val(),
+            CustomerGroupCode: $("#rdoTaxAudit").is(":checked") ? 1 : 2,
+            FirstName: $('#txtFirstName').val(),
+            FatherName: $('#txtFatherName').val(),
+            Constitution: $('#cmbConstitution').val(),
+            NameofBusiness: $('#txtBusinessName').val(),
+            BusinessPanno: $('#txtBusinessPANNO').val(),
+            GSTNo: $('#txtGSTIN').val(),
+            PANno: $('#txtPanno').val(),
+            DateRegorIncorp: $('#txtDateRegIncorp').val(),
+            DOB: $('#txtDOB').val(),
+            AccountManage: $('#txtAccountManager').val(),
+
+            ITUserName: $('#txtITUserName').val(),
+            ITPassword: $('#txtITPassword').val(),
+            ITFileNo: $('#txtITFileNo').val(),
+            ITRegEmailID: $('#txtITRegEmail').val(),
+            ITRegContactNo: $('#txtITRegContactNo').val(),
+
+            GSTFileNo: $('#txtGSTFileNo').val(),
+            GSTUserName: $('#txtGSTUserName').val(),
+            GSTPassword: $('#txtGSTPassword').val(),
+            GSTRegDate: $('#txtGSTRegDate').val(),
+            GSTRegType: $('#txtGSTRegType').val(),
+            DateofOPT: $('#txtGSTDateofOPT').val(),
+            GSTRegEmailID: $('#txtGSTRegEmail').val(),
+            GSTRegContactNo: $('#txtGSTRegContactNo').val(),
+
+            MobileNo: $('#txtCPMobileNo').val(),
+            AddMobileNo: $('#txtCPAdditionalMobileNo').val(),
+            EmailID: $('#txtCPEmail').val(),
+            AddEmailID: $('#txtCPAdditionalEmail').val(),
+            LLIPINno: $('#txLLIPINNo').val(),
+            TANNo: $('#txTANNo').val(),
+            CINNo: $('#txtCINNo').val(),
+            DINNo: $('#txDINNo').val(),
+            Address: $('#txtAddress').val(),
+            City: $('#txtCity').val(),
+            State: $('#cmbStateName').val(),
+            Country: $('#txtCountry').val(),
+            Pincode: $('#txtPincode').val(),
+            Active: $("#chkActive").is(":checked") ? 1 : 0,
+            Cby: UID
+        };
+            $.ajax({
+                url: Aurl + "customer/save",
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(lstMaster),
+                cache: false,
+                processData: false,
+                success: function (data) {
+                    $("#btnSave").prop("disabled", false);
+                    $.each(data, function (i, items) {
+                        if (items.MsgID == 0) {
+                            showSuccessSnackbar(items.Message);
+                            ClearForm();
+                            GetData(2, 0);
+                            modal.style.display = "none";
+                        }
+                        else {
+                            showErrorSnackbar(items.Message);
+                        }
+                    });
+                }, error: function (data) {
+                    $("#btnSave").prop("disabled", false);
+                    if (data.status == "401") {
+                        var msg = data.responseJSON.Message;
+                        //showErrorSnackbar(msg + " Logout and Login again.");
+                    }
+                }
+            });
+    }
+</script>

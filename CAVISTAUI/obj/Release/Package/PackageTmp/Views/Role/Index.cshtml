@@ -1,7 +1,7 @@
 ﻿@model CAVISTAUI.Models.SingleMasterModel
 
 @{
-    ViewBag.Title = "Users";
+    ViewBag.Title = "Role";
 }
 @*<script src="~/Scripts/jquery-3.7.1.js"></script>*@
 <link href="~/GKBSGrid/css/gridui.css" rel="stylesheet" />
@@ -110,7 +110,7 @@
         cursor: text;
         pointer-events: none;
         font-family: sans-serif;
-        font-weight:700;
+        font-weight: 700;
     }
 </style>
 <body>
@@ -120,6 +120,8 @@
     @Html.HiddenFor(model => model.View, new { @autocomplete = "off", @class = "form-control", @id = "txtViewID" })
     @Html.HiddenFor(model => model.FormName, new { @autocomplete = "off", @class = "form-control", @id = "txtFormName" })
     @Html.HiddenFor(model => model.ID, new { @autocomplete = "off", @class = "form-control FormclrField", @id = "txtID" })
+    <h4 id="MainHeading">@ViewData["FormName"]</h4>
+    <hr />
     <div class="toastBox"></div>
     <div class="row" style="padding-top:10px;">
         <div style="padding-bottom: 10px; padding-left: 15px; float: left ">
@@ -149,61 +151,9 @@
                                     <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
                                         <span class="form-label">
                                             <input tabindex="1" type="text" id="txtUserName" class="form-control FormclrField" placeholder="" />
-                                            <label class="labelup">User Name *</label>
+                                            <label class="labelup">Name *</label>
                                         </span>
                                         <div class="clrdiv" id="dvErrorUserName" style="color:red"></div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
-
-                                        <span class="form-label">
-                                            <input tabindex="3" type="number" id="txtMobileNo" class="form-control FormclrField" placeholder="" maxlength="12"
-                                                   oninput="javascript: if (this.value.length > this.maxLength) { this.value = this.value.slice(0, this.maxLength); }" />
-                                            <label class="labelup">Mobile No *</label>
-                                        </span>
-                                        <div class="clrdiv" id="dvErrorMobileNo" style="color:red"></div>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
-
-                                        <span class="form-label">
-                                            <input tabindex="4" type="text" id="txtEMail" class="form-control FormclrField" placeholder="" />
-                                            <label class="labelup">E-Mail ID *</label>
-                                        </span>
-                                        <div class="clrdiv" id="dvErrorEmailID" style="color:red"></div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
-                                        <span class="form-label">
-                                            <input tabindex="1" type="text" id="txtUserID" class="form-control FormclrField" placeholder="" />
-                                            <label class="labelup">User ID *</label>
-                                        </span>
-                                        <div class="clrdiv" id="dvErrorUserID" style="color:red"></div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
-
-                                        <span class="form-label">
-                                            <input tabindex="2" type="password" id="txtPassword" class="form-control FormclrField" placeholder="" />
-                                            <label class="labelup">Password *</label>
-                                        </span>
-                                        <div class="clrdiv" id="dvErrorPassword" style="color:red"></div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
-
-                                        <span class="form-label">
-                                            <select tabindex="5" id="cmbRole" class="form-control FormclrcmbField"></select>
-                                            <label class="labelup">Role</label>
-                                        </span>
-                                        <a href="javascript:void(0)" id="hrefNewRole" hidden>New Role</a>
-                                        <div class="clrdiv" id="dvErrorRole" style="color:red"></div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -253,11 +203,7 @@
     var ActionVisible = (!EnableEdit && !EnableView);
     const columns = [
         { field: 'ID', header: 'ID', type: 'label', width: 20, align: 'left', visible: false, EnableColumnMenu: false ,ShowinColumnOption : false},
-        { field: 'UserID', header: 'User ID', type: 'label', width: 150, align: 'left', visible: true, EnableColumnMenu: true, ShowinColumnOption: true },
-        { field: 'UserName', header: 'User Name', type: 'label', width: 200, align: 'left', visible: true, EnableColumnMenu: true, ShowinColumnOption: true },
-        { field: 'MobileNo', header: 'Mobile No', type: 'label', width: 150, align: 'left', visible: true, EnableColumnMenu: true, ShowinColumnOption: true },
-        { field: 'EMailID', header: 'E-Mail', type: 'label', width: 180, align: 'left', visible: true, EnableColumnMenu: true, ShowinColumnOption: true },
-        { field: 'Role', header: 'Role', type: 'label', width: 150, align: 'left', visible: true, EnableColumnMenu: true, ShowinColumnOption: true },
+        { field: 'UserName', header: 'Name', type: 'label', width: 200, align: 'left', visible: true, EnableColumnMenu: true, ShowinColumnOption: true },
         { field: 'Active', header: 'Active', type: 'label', width: 100, align: 'left', visible: true, EnableColumnMenu: true, ShowinColumnOption: true },
         { field: 'User', header: 'User', type: 'label', width: 150, align: 'left', visible: true, EnableColumnMenu: true, ShowinColumnOption: true },
         { header: 'Action', type: 'action3dots', width: 80, align: 'center', visible: !ActionVisible, specialColumn: true, ShowinColumnOption: false },
@@ -273,7 +219,7 @@
             handler: (rowData) => {
                 nMode = 3;
                 $(".clrdiv").html("");
-                $("#lblPopupheading").text("View User");
+                $("#lblPopupheading").text("View Role");
                 var ID = rowData.ID;//[0];
                 GetData(5, ID);
                 $(".FormclrField").prop("disabled", true);
@@ -292,7 +238,7 @@
             handler: (rowData) => {
                 $(".clrdiv").html("");
                 nMode = 2;
-                $("#lblPopupheading").text("Edit User");
+                $("#lblPopupheading").text("Edit Role");
                 var ID = rowData.ID;//[0];
                 GetData(5, ID);
                 $(".FormclrField").prop("disabled", false);
@@ -431,7 +377,7 @@
     $("#btnAdd").click(function () {
         nMode = 1;
         $("#chkActive,#btnSave,#cmbRole,#btnClear,.FormclrField").prop("disabled", false);
-        $("#lblPopupheading").text("Add User");
+        $("#lblPopupheading").text("Add Role");
         modal.style.display = "block";
         ClearForm();
     });
@@ -460,17 +406,8 @@
         }
         if ($("#txtUserName").val() == "") {
             IsValid = false;
-            $("#dvErrorUserName").html("User Name should not be empty");
-            showErrorSnackbar("User Name should not be empty");
-        }
-        ChkFormation = EmailValidation($("#txtEMail"), $("#dvErrorEmailID"), true);
-        if (!ChkFormation) {
-            IsValid = false;
-            //$("#dvErrorEmailID").html("E-Mail ID should not be empty");
-        }
-        ChkFormation = MobilenoValidation($("#txtMobileNo"), $("#dvErrorMobileNo"), true);
-        if (!ChkFormation) {
-            IsValid = false;
+            $("#dvErrorUserName").html("Name should not be empty");
+            showErrorSnackbar("Name should not be empty");
         }
         if (IsValid) {
             //if (cfFocus != 3) { ConfirmDialogMsg("Do you want to save data?"); } else { SaveData(); }
@@ -492,7 +429,7 @@
             "EMailID": $("#txtEMail").val(),
             "Active": $("#chkActive").is(":checked") ? 1 : 0,
             "LoginUserID": UID
-        };        
+        };
             $.ajax({
                 url: Aurl + "signup/save",
                 type: 'POST',
@@ -511,7 +448,7 @@
                         }
                         else {
                             showErrorSnackbar(items.Message);
-                        }                        
+                        }
                     });
                 }, error: function (data) {
                     $("#btnSave").prop("disabled", false);

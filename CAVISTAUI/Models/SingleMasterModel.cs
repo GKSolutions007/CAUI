@@ -20,5 +20,6 @@ namespace CAVISTAUI.Models
         public string Variant { get; set; }
         public string View { get; set; }
         public string Cancel { get; set; }
+        public string ViewPassword { get; set; }
     }
 }

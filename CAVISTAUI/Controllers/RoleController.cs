@@ -8,9 +8,9 @@ using System.Web.Mvc;
 
 namespace CAVISTAUI.Controllers
 {
-    public class CustomerMasterController : Controller
+    public class RoleController : Controller
     {
-        // GET: CustomerMaster
+        // GET: Role
         public ActionResult Index()
         {
             if (Session["LoginUserID"] == null)
@@ -20,16 +20,14 @@ namespace CAVISTAUI.Controllers
             else
             {
                 DataTable dtPermission = (System.Data.DataTable)Session["dtPermission"];
-                string AddPerm = dtPermission.Select("MenuID = 3", null).Length > 0 ? "1" : "0";
-                string ModPerm = dtPermission.Select("MenuID = 4", null).Length > 0 ? "1" : "0";
-                string ViewPerm = dtPermission.Select("MenuID = 5", null).Length > 0 ? "1" : "0";
-                string ViewPassword = dtPermission.Select("MenuID = 18", null).Length > 0 ? "1" : "0";
+                string AddPerm = dtPermission.Select("MenuID = 15", null).Length > 0 ? "1" : "0";
+                string ModPerm = dtPermission.Select("MenuID = 16", null).Length > 0 ? "1" : "0";
+                string ViewPerm = dtPermission.Select("MenuID = 17", null).Length > 0 ? "1" : "0";                
                 SingleMasterModel dam = new SingleMasterModel();
-                dam.FormName = "Customer";
+                dam.FormName = "Role";
                 dam.Add = AddPerm;
                 dam.Modify = ModPerm;
                 dam.View = ViewPerm;
-                dam.ViewPassword = ViewPassword;
                 return View(dam);
             }
         }
