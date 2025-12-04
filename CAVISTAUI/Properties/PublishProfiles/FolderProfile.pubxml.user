@@ -5,7 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>D:\Host\CA_VISTA\UI</_PublishTargetUrl>
-    <History>True|2025-12-01T12:53:26.0710449Z||;True|2025-11-29T20:32:25.4124155+05:30||;</History>
+    <History>True|2025-12-04T11:47:10.7672496Z||;True|2025-12-02T20:15:29.3831850+05:30||;True|2025-12-01T18:23:26.0710449+05:30||;True|2025-11-29T20:32:25.4124155+05:30||;</History>
     <LastFailureDetails />
   </PropertyGroup>
   <ItemGroup>
@@ -22,10 +22,10 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>12/01/2025 18:23:24</publishTime>
     </File>
     <File Include="bin/CAVISTAUI.dll">
-      <publishTime>12/01/2025 18:23:24</publishTime>
+      <publishTime>12/04/2025 17:17:09</publishTime>
     </File>
     <File Include="bin/CAVISTAUI.pdb">
-      <publishTime>12/01/2025 18:23:24</publishTime>
+      <publishTime>12/04/2025 17:17:09</publishTime>
     </File>
     <File Include="bin/Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll">
       <publishTime>12/01/2025 11:27:22</publishTime>
@@ -366,6 +366,9 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
     <File Include="Content/index.css">
       <publishTime>12/01/2025 11:27:22</publishTime>
     </File>
+    <File Include="Content/jquery-confirm.min.css">
+      <publishTime>12/03/2025 15:38:27</publishTime>
+    </File>
     <File Include="Content/jquery-ui.css">
       <publishTime>12/01/2025 11:27:22</publishTime>
     </File>
@@ -475,10 +478,10 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>12/01/2025 11:27:22</publishTime>
     </File>
     <File Include="GKBSGrid/css/gridui.css">
-      <publishTime>12/01/2025 11:27:22</publishTime>
+      <publishTime>12/04/2025 16:29:24</publishTime>
     </File>
     <File Include="GKBSGrid/js/gridui.js">
-      <publishTime>12/01/2025 11:27:22</publishTime>
+      <publishTime>12/04/2025 16:29:15</publishTime>
     </File>
     <File Include="Global.asax">
       <publishTime>12/01/2025 11:27:22</publishTime>
@@ -633,6 +636,9 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
     <File Include="Scripts/jquery-3.7.1.min.js">
       <publishTime>12/01/2025 11:27:22</publishTime>
     </File>
+    <File Include="Scripts/jquery-confirm.min.js">
+      <publishTime>12/03/2025 15:39:06</publishTime>
+    </File>
     <File Include="Scripts/jquery-ui.js">
       <publishTime>12/01/2025 11:27:22</publishTime>
     </File>
@@ -685,7 +691,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>12/01/2025 11:27:22</publishTime>
     </File>
     <File Include="Views/CustomerMaster/Index.cshtml">
-      <publishTime>12/01/2025 18:16:58</publishTime>
+      <publishTime>12/03/2025 16:55:10</publishTime>
     </File>
     <File Include="Views/Home/About.cshtml">
       <publishTime>12/01/2025 11:27:22</publishTime>
@@ -696,20 +702,29 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
     <File Include="Views/Home/Index.cshtml">
       <publishTime>12/01/2025 11:27:22</publishTime>
     </File>
+    <File Include="Views/ImportExport/Index.cshtml">
+      <publishTime>01/12/2025 20:00:12</publishTime>
+    </File>
     <File Include="Views/Login/Index.cshtml">
-      <publishTime>12/01/2025 11:27:22</publishTime>
+      <publishTime>12/04/2025 12:30:36</publishTime>
     </File>
     <File Include="Views/MapRole/Index.cshtml">
       <publishTime>12/01/2025 11:27:22</publishTime>
     </File>
+    <File Include="Views/Reports/Index.cshtml">
+      <publishTime>12/04/2025 17:11:28</publishTime>
+    </File>
     <File Include="Views/Role/Index.cshtml">
-      <publishTime>12/01/2025 18:20:21</publishTime>
+      <publishTime>01/12/2025 19:16:49</publishTime>
     </File>
     <File Include="Views/Shared/Error.cshtml">
       <publishTime>12/01/2025 11:27:22</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>12/01/2025 11:27:22</publishTime>
+      <publishTime>02/12/2025 18:19:57</publishTime>
+    </File>
+    <File Include="Views/Shared/_LayoutReport.cshtml">
+      <publishTime>12/04/2025 13:46:36</publishTime>
     </File>
     <File Include="Views/Users/Index.cshtml">
       <publishTime>12/01/2025 18:20:36</publishTime>

@@ -125,6 +125,7 @@
     <Compile Include="Controllers\ImportExportController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MapRoleController.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\ValidatePermissionController.cs" />
@@ -172,6 +173,7 @@
     <Content Include="Content\fontawesome.6.0.0.css" />
     <Content Include="Content\Gridmvc.css" />
     <Content Include="Content\index.css" />
+    <Content Include="Content\jquery-confirm.min.css" />
     <Content Include="Content\jquery-ui.css" />
     <Content Include="Content\LLPLogin.css" />
     <Content Include="Content\Loading.css" />
@@ -256,6 +258,7 @@
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
     <Content Include="Scripts\jquery-3.7.1.min.js" />
+    <Content Include="Scripts\jquery-confirm.min.js" />
     <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.dataTables.min.js" />
@@ -294,6 +297,8 @@
     <Content Include="Views\CustomerMaster\Index.cshtml" />
     <Content Include="Views\Role\Index.cshtml" />
     <Content Include="Views\ImportExport\Index.cshtml" />
+    <Content Include="Views\Shared\_LayoutReport.cshtml" />
+    <Content Include="Views\Reports\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

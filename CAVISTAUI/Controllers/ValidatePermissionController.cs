@@ -38,8 +38,8 @@ namespace CAVISTAUI.Controllers
                     dtRes = dtResult.Tables[1];
                     dtParent = dtResult.Tables[2];
                     dtPermission = dtResult.Tables[3];
-                    //dtReportParent = dtResult.Tables[4];
-                    //dtReportPermission = dtResult.Tables[5];
+                    dtReportParent = dtResult.Tables[4];
+                    dtReportPermission = dtResult.Tables[5];
                 }
             }
             //DataTable dtRes = bl.BL_ExecuteParamSP("uspManageUsers", 4, ID);            
@@ -49,8 +49,8 @@ namespace CAVISTAUI.Controllers
             Session["NavBarVisible"] = "UserPermission";           
             Session["dtParent"] = dtParent;
             Session["dtPermission"] = dtPermission;
-            //Session["dtReportParent"] = dtReportParent;
-            //Session["dtReportPermission"] = dtReportPermission;
+            Session["dtReportParent"] = dtReportParent;
+            Session["dtReportPermission"] = dtReportPermission;
 
             return RedirectToAction("Index", "Home");
         }

@@ -21,5 +21,8 @@ namespace CAVISTAUI.Models
         public string View { get; set; }
         public string Cancel { get; set; }
         public string ViewPassword { get; set; }
+        public string ViewAttachment { get; set; }
+        public string DownloadAttachment { get; set; }
+        public string DeleteAttachment { get; set; }
     }
 }

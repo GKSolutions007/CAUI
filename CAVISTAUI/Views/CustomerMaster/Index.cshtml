@@ -113,6 +113,7 @@
         font-family: sans-serif;
         font-weight: 400;
     }
+
     .labelupaddress {
         -webkit-transform: translateY(50%);
         -moz-transform: translateY(-50%);
@@ -174,6 +175,69 @@
         font-size: 20px;
     }
 </style>
+<style>
+    .modaliframePreview {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 10000;
+        top: 0%;
+        right: 0;
+        bottom: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+    }
+
+    /* Modal Content/Box */
+    @@media only screen and (min-width: 600px) {
+        .modaliframePreview-content {
+            background-color: #e4dfdf;
+            margin: auto; /* 15% from the top and centered */
+            padding: 1px;
+            border: 1px solid #888;
+            width: 70%; /* Could be more or less, depending on screen size */
+            height: 100%;
+            bottom: 0;
+            right: 0;
+            overflow: auto;
+        }
+    }
+
+    @@media only screen and (max-width: 600px) {
+        .modaliframePreview-content {
+            background-color: #ffffff;
+            margin: 10% auto; /* 15% from the top and centered */
+            padding: 25px;
+            border: 1px solid #888;
+            width: 95%; /* Could be more or less, depending on screen size */
+            height: 80%;
+            top: 20%;
+            overflow: auto;
+        }
+    }
+    /* The Close Button */
+    .closefgmodaliframePreview {
+        color: #aaa;
+        float: right;
+        font-size: 10px;
+        font-weight: bold;
+    }
+
+        .closefgmodaliframePreview:hover,
+        .closefgmodaliframePreview:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    iframe#iframepreview {
+        width: 100%;
+        height: 450px;
+        border: none;
+        background: white;
+        display: block;
+    }
+</style>
 <body>
 
     @Html.HiddenFor(model => model.Add, new { @autocomplete = "off", @class = "form-control", @id = "txtAddID" })
@@ -182,6 +246,9 @@
     @Html.HiddenFor(model => model.FormName, new { @autocomplete = "off", @class = "form-control", @id = "txtFormName" })
     @Html.HiddenFor(model => model.ID, new { @autocomplete = "off", @class = "form-control FormclrField", @id = "txtID" })
     @Html.HiddenFor(model => model.ViewPassword, new { @autocomplete = "off", @class = "form-control", @id = "txtViewPassword" })
+    @Html.HiddenFor(model => model.ViewAttachment, new { @autocomplete = "off", @class = "form-control", @id = "txtViewAttachment" })
+    @Html.HiddenFor(model => model.DeleteAttachment, new { @autocomplete = "off", @class = "form-control", @id = "txtDeleteAttachment" })
+    @Html.HiddenFor(model => model.DownloadAttachment, new { @autocomplete = "off", @class = "form-control", @id = "txtDownloadAttachment" })
     
     @*<h4 id="MainHeading">@Html.DisplayFor(model => model.FormName)</h4>
         <hr />*@
@@ -360,7 +427,7 @@
                                         </tr>
 
 
-                                        
+
                                     </table>
                                 </div>
                             </div>
@@ -467,41 +534,41 @@
                                         </tr>
                                     </table>
                                 </div>
-                                        <div class="col-sm-12 col-md-4 col-lg-4">
-                                            <table class="table" style="width:100%">
-                                               
+                                <div class="col-sm-12 col-md-4 col-lg-4">
+                                    <table class="table" style="width:100%">
 
 
-                                                <tr class="bgclrfortr">
-                                                    <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
-                                                        <div>
-                                                            <span class="form-label">
-                                                                <input class="form-control FormclrField" type="email" id="txtITUserName" placeholder="">
-                                                                <label class="labelup">IT User Name</label>
-                                                            </span>
-                                                            <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnITUserName" class="clrdivs"></div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr class="bgclrfortr">
-                                                    <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
-                                                        <div>
-                                                            <div class="form-label">
-                                                                <span onclick="togglePassword('txtITPassword',this)" id="viewITPassword"
-                                                                      style="position:absolute; right:20px; top:60%; transform:translateY(-50%); cursor:pointer;">
-                                                                    <i class="fa fa-eye"></i>
-                                                                </span>
-                                                                <input class="form-control FormclrField" type="password" id="txtITPassword" placeholder="">
-                                                                <label class="labelup">IT Password</label>
-                                                            </div>
-                                                            <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnITPassword" class="clrdivs"></div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </div>
+
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <span class="form-label">
+                                                        <input class="form-control FormclrField" type="email" id="txtITUserName" placeholder="">
+                                                        <label class="labelup">IT User Name</label>
+                                                    </span>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnITUserName" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bgclrfortr">
+                                            <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
+                                                <div>
+                                                    <div class="form-label">
+                                                        <span onclick="togglePassword('txtITPassword',this)" id="viewITPassword"
+                                                              style="position:absolute; right:20px; top:60%; transform:translateY(-50%); cursor:pointer;">
+                                                            <i class="fa fa-eye"></i>
+                                                        </span>
+                                                        <input class="form-control FormclrField" type="password" id="txtITPassword" placeholder="">
+                                                        <label class="labelup">IT Password</label>
+                                                    </div>
+                                                    <div style="color: red; padding-top: 5px; padding-left: 5px;" id="divErrorOnITPassword" class="clrdivs"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
+                        </div>
 
                         <!-- TAB 3 -->
                         <div id="tab-contact" class="tab-pane fade">
@@ -722,7 +789,7 @@
                                 </div>
                                 <div class="col-sm-12 col-md-4 col-lg-4">
                                     <table class="table" style="width:100%">
-                                        
+
                                         <tr class="bgclrfortr">
                                             <td style="border:none;padding-left:12px;padding-right:7px" colspan="2">
                                                 <span class="form-label">
@@ -735,6 +802,7 @@
                                             </td>
                                         </tr>
                                     </table>
+                                    <div id="attachment-grid" style="height: auto; width: 100%;max-height:250px"></div>
                                 </div>
                             </div>
 
@@ -751,6 +819,28 @@
                         <button type="button" class="btn btn-success" id="btnSave"><span class="glyphicon glyphicon-saved"> Save</span></button>
                         <button type="button" class="btn btn-warning" id="btnClose"><span class="glyphicon glyphicon-remove"> Close</span></button>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modaliframePreview" id="myiframePreview">
+        <div class="modal-dialog" style="width:100%;">
+            <div class="modaliframePreview-content">
+                <!-- Modal Header -->
+                <div class="modal-header" style="background-color:bisque">
+                    <button type="button" style="background-color:red;color:white" class="closefgmodaliframePreview">&times;</button>
+                    <table>
+                        <tr>
+                            <td style="padding-right:30px;">
+                                <h5 class="modal-title" style="color:black"><b>Preview</b></h5>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <iframe id="iframepreview" src=""
+                            style="width:100%;height:450px;background-color: white"></iframe>
                 </div>
             </div>
         </div>
@@ -777,6 +867,21 @@
             input.max = today;
         });
     });
+    var modaliframePreview = document.getElementById("myiframePreview");
+    var spanmodaliframePreview = document.getElementsByClassName("closefgmodaliframePreview")[0];
+    spanmodaliframePreview.onclick = function () {
+        modaliframePreview.style.display = "none";
+    }
+    $('#btnclosefgmodaliframePreview').click(function (e) {
+        modaliframePreview.style.display = "none";
+    });
+
+    function previewiframe(link) {
+       // console.log(link);
+        const options = "#toolbar=0&navpanes=0&scrollbar=0&zoom=80";
+        document.getElementById("iframepreview").src = link + options;        
+        modaliframePreview.style.display = "block";
+    }
     var Aurl = '@Session["APIurl"]';
     if ($("#txtAddID").val() == 0) {
         $("#trAdd").hide();
@@ -795,9 +900,9 @@
         $("#my-grid").hide();
     }
     if ($("#txtViewPassword").val() == 0) {
-        $("#viewGSTPassword,#viewITPassword").hide();               
+        $("#viewGSTPassword,#viewITPassword").hide();
     }
-    
+
     const data = [];
     var ActionVisible = (!EnableEdit && !EnableView);
     const columns = [
@@ -811,6 +916,7 @@
         { field: 'User', header: 'User', type: 'label', width: 150, align: 'left', visible: true, EnableColumnMenu: true, ShowinColumnOption: true },
         { header: 'Action', type: 'action3dots', width: 80, align: 'center', visible: !ActionVisible, specialColumn: true, ShowinColumnOption: false },
     ];
+    //
     const allGridActions = [
         {
             icon: '👁️',
@@ -828,7 +934,6 @@
                 $(".FormclrField,.FormclrcmbField,input[type=radio]").prop("disabled", true);
                 $("#chkActive,#btnSave,#btnClear").prop("disabled", true);
                 modal.style.display = "block";
-
             }
         },
         {
@@ -845,7 +950,7 @@
                 var ID = rowData.ID;//[0];
                 GetData(3, ID);
                 $(".FormclrField,.FormclrcmbField,input[type=radio]").prop("disabled", false);
-                
+
                 $("#chkActive,#btnSave").prop("disabled", false);
                 $("#btnClear").prop("disabled", true);
                 modal.style.display = "block";
@@ -872,6 +977,112 @@
         rowActionsMenu: menuActions,       // Pass the Delete/Print actions
         //onCellChange: handleCellUpdate,
     });
+    var AttachEnableView = $("#txtViewAttachment").val() == 1;
+    var AttachEnableDelete = $("#txtDeleteAttachment").val() == 1;
+    var AttachEnableDownload = $("#txtDownloadAttachment").val() == 1; 
+    var AttachActionVisible = (!AttachEnableView && !AttachEnableDelete && !AttachEnableDownload);
+    const attachmentcolumns = [
+        { field: 'fullPath', header: 'fullPath', type: 'label', width: 0, align: 'left', visible: false, EnableColumnMenu: false, ShowinColumnOption: false }, ,
+        { field: 'extension', header: 'extension', type: 'label', width: 0, align: 'left', visible: false, EnableColumnMenu: false, ShowinColumnOption: false }, ,
+        { field: 'contansfolder', header: 'contansfolder', type: 'label', width: 0, align: 'left', visible: false, EnableColumnMenu: false, ShowinColumnOption: false }, ,
+        { field: 'fileName', header: 'File Name', type: 'label', width: 150, align: 'left', visible: true, EnableColumnMenu: false, ShowinColumnOption: true },
+        { field: 'fileSize', header: 'File Size', type: 'label', width: 80, align: 'left', visible: true, EnableColumnMenu: false, ShowinColumnOption: true },
+        { field: 'CreateTime', header: 'Upload Time', type: 'label', width: 150, align: 'left', visible: true, EnableColumnMenu: false, ShowinColumnOption: true },
+        { header: 'Action', type: 'action3dots', width: 80, align: 'center', visible: !AttachActionVisible, specialColumn: true, ShowinColumnOption: false },
+    ];
+    var attachtemprow = [];
+    //txtViewAttachment,txtDeleteAttachment
+
+    const AttachmentGridActions = [
+        {
+            icon: '👁️',
+            title: 'View',
+            className: 'dg-action-view',
+            displayType: 'menu_item',
+            visible: AttachEnableView,
+            handler: (rowData) => {
+                //console.log("attach row : ", rowData);                
+                var extension = rowData.extension;//[0];
+                let ext = extension.toLowerCase();
+                const allowed = [".pdf", ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg"];
+                if (allowed.includes(ext)) {
+                    var tempurl = Aurl.replace("/api/", "/");
+                    modaliframePreview.style.display = "block";
+                    var contansfolder = rowData.contansfolder;//[0];
+                    var FileName = rowData.fileName;//[0];
+                    previewiframe(tempurl + contansfolder + FileName);
+                    //previewiframe("https://localhost:44349/Attachments/Customer/1/pve_isq_link.jpg");        
+                }
+                else{
+                    showErrorSnackbar("Unable to view this format(" + ext+") file");
+                }
+            }
+        },
+        {
+            icon: '🗑️',
+            title: 'Delete',
+            className: 'dg-action-trash',
+            displayType: 'menu_item',
+            visible: AttachEnableDelete,
+            handler: (rowData, gridInstance) => {
+                if (nMode == 2) {
+                    if (confirm(`Are you sure you want to delete file ${rowData.fileName}?`)) {
+                        var FileName = rowData.fileName;//[0];
+                        var FilePath = rowData.fullPath;//[0];
+                        deletefiles(FilePath, FileName, gridInstance, rowData);
+                    }
+                }
+                else {
+                    showErrorSnackbar("Unable to delete in view mode");
+                }
+            }
+        },
+        {
+            icon: '📥',
+            title: 'Download',
+            className: 'dg-action-download',
+            displayType: 'menu_item',
+            visible: AttachEnableDownload,
+            handler: (rowData, gridInstance) => {
+                var FileName = rowData.fileName;//[0];
+                var FilePath = rowData.fullPath;//[0];                    
+                location.href = Aurl + 'customer/downloadfile?FPath=' + FilePath + "&FName=" + FileName;
+            }
+        },
+    ];
+    const AttachActiveActions = AttachmentGridActions.filter(a => a.displayType === 'menu_item' && a.visible == true);
+    var attachmentgrid = new GKBSDynamicGrid('#attachment-grid', attachmentcolumns, attachtemprow, {
+        enablePagination: false,
+        pageSize: 10,
+        enableSearch: true,
+        stickyToWindow: true,
+        enableExport: false,
+        enablePrint: false,
+        enableColumnsBtn: false,  // Controls the '⚙️ Columns' button (Assuming you want to rename enableColumnVisibility)
+        enableAddRow: false,      // 💡 NEW: Controls '➕ Add Row'
+        enableRemoveRow: false,   // 💡 NEW: Controls '➖ Remove Selected'
+        enableSorting: false,
+        singleIconAction: [], // Pass the single View action
+        rowActionsMenu: AttachActiveActions,       // Pass the Delete/Print actions
+        //onCellChange: handleCellUpdate,
+    });
+    function reinitiateattachgrid() {
+        attachmentgrid = new GKBSDynamicGrid('#attachment-grid', attachmentcolumns, attachtemprow, {
+            enablePagination: false,
+            pageSize: 10,
+            enableSearch: true,
+            stickyToWindow: true,
+            enableExport: false,
+            enablePrint: false,
+            enableColumnsBtn: false,  // Controls the '⚙️ Columns' button (Assuming you want to rename enableColumnVisibility)
+            enableAddRow: false,      // 💡 NEW: Controls '➕ Add Row'
+            enableRemoveRow: false,   // 💡 NEW: Controls '➖ Remove Selected'
+            enableSorting: false,
+            singleIconAction: [], // Pass the single View action
+            rowActionsMenu: AttachActiveActions,       // Pass the Delete/Print actions
+            //onCellChange: handleCellUpdate,
+        });
+    }
     var arrData = [];
     var UID = '@Session["LoginUserID"]';
     var RID = '@Session["RoleID"]';
@@ -884,7 +1095,7 @@
             url: Aurl + "customer/get",
             type: 'get',
             contentType: 'json',
-            data: {Mode: nMode, ID: strName },            
+            data: {Mode: nMode, ID: strName },
             success: function (data) {
                 if (nMode == 1) {
                     console.log("data ", eval(data));
@@ -945,6 +1156,7 @@
                     }
                 }
                 else if (nMode == 3) {
+                    var attachemtlist = [];
                     $.each(eval(data), function (i, items) {
                         console.log("User info ", items)
                         $("#txtID").val(items.ID),
@@ -990,8 +1202,25 @@
                             $('#txtCountry').val(items.Country),
                             $('#txtPincode').val(items.Pincode),
                             $("#chkActive").prop("checked", items.Active);
+                        attachemtlist = items.FileList;
                     });
-                }                
+                    console.log("AttachmentGridActions ", AttachmentGridActions);
+                    attachmentgrid = new GKBSDynamicGrid('#attachment-grid', attachmentcolumns, attachemtlist, {
+                        enablePagination: false,
+                        pageSize: 10,
+                        enableSearch: true,
+                        stickyToWindow: true,
+                        enableExport: false,
+                        enablePrint: false,
+                        enableColumnsBtn: false,  // Controls the '⚙️ Columns' button (Assuming you want to rename enableColumnVisibility)
+                        enableAddRow: false,      // 💡 NEW: Controls '➕ Add Row'
+                        enableRemoveRow: false,   // 💡 NEW: Controls '➖ Remove Selected'
+                        enableSorting: false,
+                        singleIconAction: [], // Pass the single View action
+                        rowActionsMenu: AttachActiveActions,       // Pass the Delete/Print actions
+                        //onCellChange: handleCellUpdate,
+                    });
+                }
             }, error: function (data) {
                 if (data.status == "401") {
                     var msg = data.responseJSON.Message;
@@ -1037,6 +1266,8 @@
         $(".clrdivs").html("");
         $("#cmbRole").val();
         $("#txtUserID").focus();
+        reinitiateattachgrid();
+        
         if (nMode != 1)
             modal.style.display = "none";
     }
@@ -1167,11 +1398,32 @@
             Active: $("#chkActive").is(":checked") ? 1 : 0,
             Cby: UID
         };
+        // Create FormData
+        var formData = new FormData();
+
+        // Add JSON object as a string
+        formData.append("model", JSON.stringify(lstMaster));
+
+        // Add attachment file
+        //var file = $("#txtAttachments")[0].files[0];
+        //if (file) {
+        //    formData.append("file", file);
+        //}
+        var fileUpload = $("#txtAttachments").get(0);
+        var files = fileUpload.files;
+        // Create FormData object
+        // Looping over all files and add it to FormData object
+        for (var i = 0; i < files.length; i++) {
+            formData.append("Customer", files[i]);
+        }
+
             $.ajax({
                 url: Aurl + "customer/save",
                 type: 'POST',
-                contentType: 'application/json; charset=utf-8',
-                data: JSON.stringify(lstMaster),
+                //contentType: 'application/json; charset=utf-8',
+                //data: JSON.stringify(lstMaster),
+                data: formData,
+                contentType: false,     // IMPORTANT
                 cache: false,
                 processData: false,
                 success: function (data) {
@@ -1195,5 +1447,30 @@
                     }
                 }
             });
+    }
+    function deletefiles(strFilePth, strFileName, gridInstance, rowData) {
+        $.ajax({
+            url: Aurl + "customer/deletemyuploadfile",
+            type: 'get',
+            contentType: 'json',
+            data: { FPath: strFilePth, FName: strFileName },
+            xhrFields: {
+                withCredentials: true
+            },
+            success: function (data) {
+                $.each(data, function (i, items) {
+                    if (items.MsgID == "1") {
+                        showSuccessSnackbar(items.Message);
+                        //GetData(2);
+                        gridInstance.deleteRow(rowData._gridId);
+                    }
+                    else if (items.MsgID == "2") {
+                        showErrorSnackbar(items.Message);
+                    }
+                });
+            }, error: function (data) {
+                showErrorSnackbar("Error : " + data);
+            }
+        });
     }
 </script>
