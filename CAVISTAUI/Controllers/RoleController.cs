@@ -10,7 +10,7 @@ namespace CAVISTAUI.Controllers
 {
     public class RoleController : Controller
     {
-        // GET: Users
+        // GET: Role
         public ActionResult Index()
         {
             if (Session["LoginUserID"] == null)
@@ -20,11 +20,11 @@ namespace CAVISTAUI.Controllers
             else
             {
                 DataTable dtPermission = (System.Data.DataTable)Session["dtPermission"];
-                string AddPerm = dtPermission.Select("MenuID = 7", null).Length > 0 ? "1" : "0";
-                string ModPerm = dtPermission.Select("MenuID = 8", null).Length > 0 ? "1" : "0";
-                string ViewPerm = dtPermission.Select("MenuID = 9", null).Length > 0 ? "1" : "0";           
+                string AddPerm = dtPermission.Select("MenuID = 15", null).Length > 0 ? "1" : "0";
+                string ModPerm = dtPermission.Select("MenuID = 16", null).Length > 0 ? "1" : "0";
+                string ViewPerm = dtPermission.Select("MenuID = 17", null).Length > 0 ? "1" : "0";                
                 SingleMasterModel dam = new SingleMasterModel();
-                dam.FormName = "Users";
+                dam.FormName = "Role";
                 dam.Add = AddPerm;
                 dam.Modify = ModPerm;
                 dam.View = ViewPerm;

@@ -1,0 +1,386 @@
+﻿@model CAVISTAUI.Models.SingleMasterModel
+@{
+    ViewBag.Title = "Import/Export";
+}
+
+<style>
+    td {
+        font-size: 11px;
+    }
+
+
+    input[type=number] {
+        text-align: right;
+    }
+
+        input[type=number]::placeholder {
+            text-align: left;
+        }
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+    /* The Modal (background) */
+    .modalBatch {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 10; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        /*overflow: auto;*/ /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content/Box */
+    @@media only screen and (min-width: 600px) {
+        .modalBatch-content {
+            background-color: #ffffff;
+            margin: 3% auto; /* 15% from the top and centered */
+            padding: 10px;
+            border: 1px solid #888;
+            width: 35%; /* Could be more or less, depending on screen size */
+            height: 70%;
+            top: 5%;
+            /* overflow: auto;*/
+        }
+    }
+
+    @@media only screen and (max-width: 600px) {
+        .modalBatch-content {
+            background-color: #ffffff;
+            margin: 10% auto; /* 15% from the top and centered */
+            padding: 25px;
+            border: 1px solid #888;
+            width: 95%; /* Could be more or less, depending on screen size */
+            height: 80%;
+            top: 20%;
+            /*overflow: auto;*/
+        }
+    }
+    /* The Close Button */
+    .closefg {
+        color: #aaa;
+        float: right;
+        font-size: 10px;
+        font-weight: bold;
+    }
+
+        .closefg:hover,
+        .closefg:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    .form-label {
+        position: relative;
+        display: block;
+        clear: both;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .labelup {
+        -webkit-transform: translateY(50%);
+        -moz-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+        -o-transform: translateY(-50%);
+        transform: translateY(50%);
+        -webkit-transition: all 0.2s ease-in-out;
+        -moz-transition: all 0.2s ease-in-out;
+        transition: all 0.2s ease-in-out;
+        position: absolute;
+        top: -50%;
+        left: 1em;
+        background: #fffefe;
+        color: #2b2828;
+        font-size: 1em;
+        cursor: text;
+        pointer-events: none;
+        font-family: sans-serif;
+    }
+</style>
+<style>
+    .daterange {
+        display: flex;
+        align-items: center;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 4px 5px;
+        max-width: 265px;
+    }
+
+        .daterange input {
+            border: none;
+            outline: none;
+            padding: 2px;
+            width: 100%;
+        }
+
+    .separator {
+        margin: 0 8px;
+        color: #666;
+    }
+
+    .error {
+        color: red;
+        margin-top: 8px;
+        font-size: 14px;
+    }
+</style>
+<body>
+    @Html.HiddenFor(model => model.FormName, new { @autocomplete = "off", @class = "form-control", @id = "txtFormName" })
+    <h4 id="MainHeading">@Html.DisplayFor(model => model.FormName)</h4>
+    <div class="row" style="margin-bottom: 50px;">
+        <hr class="style14" />
+        <div class="toastBox"></div>
+        <div class="col-xs-12 col-lg-12 col-md-12" align="center">
+            <table class="table" style="width:100%">
+                <tr>
+
+                    <td style="border:none;padding-left:12px;padding-right:7px">
+                        <span class="form-label">
+                            <select class="form-control" id="cmbTransaction">
+                                <option value="1">Customer</option>                               
+                            </select>
+                            <label class="labelup">Import *</label>
+                        </span>
+                        <div class="clrdiv" id="dvErrorTrans" style="color:red"></div>
+                    </td>
+                    <td style="border:none;padding-left:12px;padding-right:7px">
+                        <span class="form-label">
+                            <input type="file" accept=".xls,.xlsx" id="file" class="form-control" />
+                            <label class="labelup">Choose File *</label>
+                        </span>
+                        <div class="clrdiv" id="dvErrorFiles" style="color:red"></div>
+                    </td>                    
+                    <td style="border:none;padding-left:12px;padding-right:7px">
+                        <button class="btn btn-success" id="btnLoadData"><i class="glyphicon glyphicon-download"></i> Import File Data </button>
+                        <button class="btn btn-info" id="btnTemplate"><i class="glyphicon glyphicon-file"></i> Template </button>
+                        <button class="btn btn-warning" id="btnExportData"><i class="glyphicon glyphicon-export"></i> Export Data </button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <br />
+        <div align="center" id="dvProgImg" hidden>
+            <img src="~/dist/themes/default/throbber.gif" /><label style="padding-left:10px;color:brown"> Import data is processing. Please wait...</label>
+        </div>
+        <hr class="style14" />
+        @*<div align="left">*@
+        @*<span class="glyphicon glyphicon-book" style="color:deepskyblue"></span>&#x2009;&#x2009;<span style="text-align:center;font-weight:bold;color:deepskyblue" id="divOpenBal"></span>*@
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg12" align="center" id="dvmsg" hidden>
+            <div style="color:darkgreen;font-size:20px" align="center" id="dvImpComp">
+                Data Imported Successfully.
+            </div>
+            <table hidden>
+                <tr>
+                    <td align="right">
+                        <label style="font-size:medium;text-align:left;">Total Records : </label>
+                    </td>
+                    <td>
+                        <label style="font-size:30px;text-align:center;color:blue;padding-left:10px;" id="lblTotCount">10</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <label style="font-size:medium;text-align:left;">Valid/Saved Records : </label>
+                    </td>
+                    <td>
+                        <label style="font-size:30px;text-align:center;color:forestgreen;padding-left:10px" id="lblsaved">8</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <label style="font-size:medium;text-align:left;">In-Valid/Error Records : </label>
+                    </td>
+                    <td>
+                        <label style="font-size:30px;text-align:center;color:palevioletred;padding-left:10px" id="lblnotsaved">2</label>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <br />
+        <div class="col-md-12" align="center" hidden>
+            <table align="center">
+                <tbody>
+                    <tr>
+                        <td>
+                            <button id="btnClear" type="button" class="btn btn-danger" style="height:30px; width:100px"><span class="glyphicon glyphicon-refresh" style="color: white"></span>&#x2009;Clear</button>
+                        </td>
+                        <td>
+                            <button id="btnImport" type="button" class="btn btn-success " style="height:30px; width:100px"><span class="glyphicon glyphicon-upload" style="color: white"></span>&#x2009;Import</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <input id="txtDwldefile" hidden />
+        </div>
+        @*<span class="glyphicon glyphicon-book" style="color:deepskyblue"></span>&#x2009;&#x2009;<span style="text-align:center;font-weight:bold;color:deepskyblue" id="divClsBal"></span>*@
+        @*</div>*@
+    </div>
+</body>
+
+
+<script type="text/javascript">
+    var UID = '@Session["LoginUserID"]';
+    var Aurl = '@Session["APIurl"]';
+
+    $("#btnLoadData").click(function () {
+
+        //var data = new FormData($('#file')[0].files[0]);
+        var fileUpload = $("#file").get(0);
+        var files = fileUpload.files;
+        // Create FormData object
+        var File = new FormData();
+        // Looping over all files and add it to FormData object
+
+        if (files.length > 0) {
+            $("#btnLoadData").prop("disabled", true);
+            var Trans = $("#cmbTransaction").val();
+            var TName = $("#cmbTransaction option:selected").text();
+            File.append(Trans, files[0]);
+            File.append(TName, files[0]);
+            File.append(UID, files[0]);
+            for (var i = 0; i < files.length; i++) {
+                File.append(files[i].name, files[i]);
+            }
+            $('#dvProgImg').show();
+            $('#dvImpComp').html("");
+            $.ajax({
+                //url: '@Url.Action("LoadSelectFiledata", "Importexport")',
+                url: Aurl + "uploadimportfile",
+                type: 'POST',
+                datatype: "JSON",
+                data: File,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    $("#btnLoadData").prop("disabled", false);
+                    if (data == "0") {
+                        showErrorSnackbar("No Records found");
+                    }
+                    if (data == "0.1") {
+                        showErrorSnackbar("No Records found in Header and Items Sheet");
+                    }
+                    if (data == "0.2") {
+                        showErrorSnackbar("No Records found in Header Sheet");
+                    }
+                    if (data == "0.3") {
+                        showErrorSnackbar("No Records found in Items Sheet");
+                    }
+                    else if (data == "1") {
+                        showErrorSnackbar("Choose any one file");
+                    }
+                    else if (data == "2") {
+                        showErrorSnackbar("Column Name mismatching in selected file");
+                    }
+                    else if (data == "21") {
+                        showErrorSnackbar("Column Name mismatching in Header and Items Sheet");
+                    }
+                    else if (data == "22") {
+                        showErrorSnackbar("Column Name mismatching in Header Sheet");
+                    }
+                    else if (data == "23") {
+                        showErrorSnackbar("Column Name mismatching in Items Sheet");
+                    }
+                    else {
+                        $.each(data, function (i, items) {
+                            $('#dvProgImg').hide();
+                            $('#dvmsg').show();
+                            $('#dvImpComp').html(items.Msg);
+
+                            if (items.ID == "0") {
+                                $('#dvImpComp').css("color", "green");
+                                showSuccessSnackbar("Data Imported Successfully");
+                                //Table.clear().draw();
+                                $('#lblTotCount').text(items.Total);
+                                $('#lblsaved').text(items.Saved);
+                                $('#lblnotsaved').text(items.UnSaved);
+                                $("#file").val(null);
+                            }
+                            else if (items.ID == "2") {
+                                showErrorSnackbar("Error : " + items.Msg);
+                                $('#dvImpComp').css("color", "red");
+                                $('#dvProgImg').hide();
+                            }
+                            else {
+                                $('#dvImpComp').css("color", "red");
+                                $('#lblTotCount').text("-");
+                                $('#lblsaved').text("-");
+                                $('#lblnotsaved').text("-");
+                                //Table.clear().draw();
+                                //location.href = 'Importexport/DownloadErrorData?FPath=' + items.FilePath + "&FName=" + items.FileName;
+                                location.href = Aurl + 'downloaderrordata?FPath=' + items.FilePath + "&FName=" + items.FileName;
+                                showErrorSnackbar("Error Occured");
+                            }
+                        });
+                    }
+                }, error: function (data) {
+                    $('#dvProgImg').hide();
+                    $("#btnLoadData").prop("disabled", false);
+                    showErrorSnackbar("Error Occured");
+                }
+            });
+        } else {
+            $("#btnLoadData").prop("disabled", false);
+            $('#dvProgImg').hide();
+            showErrorSnackbar("Choose valid file");
+        }
+    });
+    $("#tdDateRange").hide();
+    //cmbTransaction
+    $("#cmbTransaction").change(function (e) {
+        var sel = e.target.value;
+        $("#btnTemplate").show();
+    });
+    var Aurl = '@Session["APIurl"]';
+    $("#btnTemplate").click(function () {
+        var Trans = $("#cmbTransaction").val();
+        var TName = $("#cmbTransaction option:selected").text();
+        location.href = Aurl + 'generatetemplate?TransID=' + Trans + "&TransName=" + TName;
+        @*$.ajax({
+            url: '@Url.Action("GenerateTemplate", "Importexport")',
+            type: 'get',
+            contentType: 'json',
+            data: { TransID: Trans, TransName: TName },
+            xhrFields: {
+                withCredentials: true
+            },
+            success: function (data) {
+
+            }
+        });*@
+    });
+    $("#btnExportData").click(function () {
+        var Trans = $("#cmbTransaction").val();
+        var TName = $("#cmbTransaction option:selected").text();
+        var From = $("#dtpFrom").val();
+        var To = $("#dtpTo").val();
+        //location.href = 'Importexport/ExportData?TransID=' + Trans + "&TransName=" + TName;
+        location.href = Aurl + 'exporttemplate?TransID=' + Trans + '&TransName=' + TName;
+        @*$.ajax({
+            url: '@Url.Action("GenerateTemplate", "ExportData")',
+            type: 'get',
+            contentType: 'json',
+            data: { TransID: Trans, TransName: TName },
+            xhrFields: {
+                withCredentials: true
+            },
+            success: function (data) {
+
+            }
+        });*@
+    });    
+</script>

@@ -120,11 +120,14 @@
     @Html.HiddenFor(model => model.View, new { @autocomplete = "off", @class = "form-control", @id = "txtViewID" })
     @Html.HiddenFor(model => model.FormName, new { @autocomplete = "off", @class = "form-control", @id = "txtFormName" })
     @Html.HiddenFor(model => model.ID, new { @autocomplete = "off", @class = "form-control FormclrField", @id = "txtID" })
-    <h4 id="MainHeading">@ViewData["FormName"]</h4>
-    <hr />
     <div class="toastBox"></div>
-    <div style="padding-bottom:10px;float:right">
-        <button id="btnAdd" class="btn btn-info"><span class="glyphicon glyphicon-plus" style="color: white"></span>&#x2009;Add New</button>
+    <div class="row" style="padding-top:10px;">
+        <div style="padding-bottom: 10px; padding-left: 15px; float: left ">
+            <h4 id="MainHeading">@Html.DisplayFor(model => model.FormName)</h4>
+        </div>
+        <div style="padding-bottom: 10px; padding-right: 15px; float: right">
+            <button id="btnAdd" class="btn btn-info"><span class="glyphicon glyphicon-plus" style="color: white"></span>&#x2009;Add New</button>
+        </div>
     </div>
     <div id="my-grid" style="height: 500px; width: 100%;"></div>
     <div class="modalBatch" id="myModalfg">
